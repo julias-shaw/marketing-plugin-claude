@@ -1,0 +1,11 @@
+{
+  "name": "marketing",
+  "description": "A plugin to help with marketing.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Julias Shaw",
+    "url": "https://github.com/julias-shaw"
+  },
+  "license": "Proprietary, all rights reserved",
+  "repository": "https://github.com/julias-shaw/marketing-plugin-claude"
+}
