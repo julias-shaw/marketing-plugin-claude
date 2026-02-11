@@ -3,14 +3,6 @@ name: Check shared files and version sync
 on:
   push:
     branches: [main]
-    paths:
-      - 'skills/**/references/version-check.md'
-      - 'skills/**/references/dossier-template.md'
-      - 'skills/**/references/content-audit.md'
-      - 'skills/**/references/customer-profile.md'
-      - 'skills/**/migrations/**'
-      - 'skills/**/SKILL.md'
-      - '.claude-plugin/plugin.json'
   pull_request:
     paths:
       - 'skills/**/references/version-check.md'
