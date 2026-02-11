@@ -164,16 +164,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build .skill package
-        run: |
-          version="${{ needs.discover-skills.outputs.version }}"
-          artifact_name="${{ matrix.skill }}-${version}.skill"
-          echo "Packaging ${{ matrix.skill }} → $artifact_name"
-          (cd "skills/${{ matrix.skill }}" && zip -r "../../$artifact_name" .)
-          ls -lh "$artifact_name"
-
       - name: Upload ${{ matrix.skill }} artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.skill }}-${{ needs.discover-skills.outputs.version }}.skill
-          path: ${{ matrix.skill }}-${{ needs.discover-skills.outputs.version }}.skill
+          name: ${{ matrix.skill }}-${{ needs.discover-skills.outputs.version }}
+          path: skills/${{ matrix.skill }}/
