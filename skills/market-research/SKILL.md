@@ -1,12 +1,14 @@
 ---
 name: market-research
 metadata:
-  version: 1.2.0
+  version: 1.4.0
   repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Run a structured 5-step AI-powered market research workflow based on Eugene Schwartz's
-  research methodology. Produces a comprehensive research dossier that maps customer language,
-  psychographics, awareness levels, hidden motivations, and feature-to-desire connections.
+  research methodology. Produces a multi-file research package: market snapshot, voice of
+  customer (~160 quotes), psychographic profile, awareness & motivation map, feature-to-desire
+  bridge, and a summary dossier. Uses subagent architecture for deep web research without
+  hitting context limits.
   Use this skill whenever the user wants to deeply understand their target market, do customer
   research, build buyer personas, prepare for copywriting, plan messaging strategy, or says
   things like "research my audience", "understand my customers", "who is my buyer",
@@ -20,21 +22,29 @@ description: >
 
 # Market Research Skill
 
-A 5-step market research workflow that produces a complete customer intelligence dossier.
+A 5-step market research workflow that produces a complete customer intelligence package.
 Based on Eugene Schwartz's classic research methodology — the gold standard for
 understanding markets since 1966.
 
+This skill uses a **subagent architecture**: the main context acts as a thin orchestrator,
+dispatching each research phase to a dedicated subagent via the Task tool. This prevents
+context exhaustion during web-heavy phases and enables parallel research across multiple sites.
+
 ## Output
 
-Three deliverables:
+A directory named `market-research-{product-slug}/` containing:
 
-1. A **Markdown research dossier** (see `references/dossier-template.md` for structure) covering:
-   market snapshot, voice of customer (~160 quotes), psychographic profile, awareness & motivation
-   map, and feature-to-desire bridge.
-2. A **`voice-of-customer.csv`** file containing every quote from Phase 2 in a structured,
-   filterable format. Columns: `Quote,Date,Type,URL,Source,Author,Category`.
-3. A **`voice-of-customer.csv.meta`** companion file with YAML metadata (skill name, version,
-   creation date, column list) so migration tooling can detect the CSV's version.
+| File | Description |
+|------|-------------|
+| `00-inputs.md` | Captured research inputs (persona, product, problems, URLs) |
+| `01-market-snapshot.md` | Phase 1: Strategic foundation — who, what, why |
+| `02-voice-of-customer.md` | Phase 2: ~160 categorized quotes from real online sources |
+| `03-psychographic-profile.md` | Phase 3: Themed psychographic clusters across 4 dimensions |
+| `04-awareness-motivation-map.md` | Phase 4: Awareness levels, desire ladders, hidden motivations |
+| `05-feature-desire-bridge.md` | Phase 5: Feature → benefit → emotion → desire mapping |
+| `voice-of-customer.csv` | All Phase 2 quotes in structured CSV format |
+| `voice-of-customer.csv.meta` | YAML metadata for the CSV (version, columns) |
+| `research-summary.md` | Lightweight summary dossier linking all phase files |
 
 ## Workflow
 
@@ -45,8 +55,8 @@ procedure. Do not skip this step — but if the check fails, warn the user and c
 
 ### Artifact Migration
 
-If the user provides an existing artifact (a previously generated dossier or CSV file), or
-explicitly asks to "migrate this" or "update this to the latest format":
+If the user provides an existing artifact (a previously generated dossier, phase file, or CSV),
+or explicitly asks to "migrate this" or "update this to the latest format":
 
 1. Read `references/migration-check.md` and follow the detection procedure.
 2. If the artifact is outdated, offer to migrate it before proceeding with any new work.
@@ -57,10 +67,9 @@ frontmatter to determine whether it's current.
 
 ### Phase 0: Gather Inputs
 
-Before running any research, collect three pieces of context from the user. These are required
-for every step and should be captured once, then reused throughout.
+This phase runs directly in the main context (no subagent needed).
 
-Ask the user:
+Collect these inputs from the user:
 
 1. **Who is your ideal customer?** (demographics, psychographics, or even just a rough description)
 2. **What is your product/service?** (what it is, how it's positioned, pricing tier if relevant)
@@ -71,84 +80,273 @@ Also ask for:
 - 1-2 competitor URLs (if available)
 - Any existing customer research, testimonials, or review links
 
-Store these inputs — they get pasted into every subsequent step.
+If the user has partial answers, that's fine — Phase 1 will help fill gaps.
 
-If the user has partial answers, that's fine. Step 1 will help fill the gaps.
+**Create output directory:** Derive a slug from the product name (lowercase, hyphens for
+spaces, strip special characters). Create directory `market-research-{slug}/` in the current
+working directory.
+
+**Write `00-inputs.md`:** Save all collected inputs to `{output_dir}/00-inputs.md` in this format:
+
+```
+---
+skill_version: {read from metadata.version above}
+skill_name: market-research
+---
+
+# Research Inputs
+
+## Ideal Customer Persona
+{persona description}
+
+## Product / Service
+{product description}
+
+## Problems It Solves
+{problems description}
+
+## URLs
+- Brand website: {url or "Not provided"}
+- Competitor sites: {urls or "Not provided"}
+- Existing research: {urls or "Not provided"}
+```
+
+Note the `skill_version` in the frontmatter example above. Read the version dynamically from
+`metadata.version` in this file's frontmatter — do not hardcode it. Output the frontmatter
+as raw YAML (the `---` delimiters only, no surrounding code fences).
+
+Store the `{output_dir}` path and the path to this skill's directory (`{skill_dir}` — the
+directory containing this SKILL.md file) for use in all subsequent Task prompts.
 
 ### Phase 1: Market Snapshot
 
 **Goal:** Establish a clear, concise foundation — target customer, product positioning, core problems.
 
-Read `references/prompt-1-market-snapshot.md` and run it with the user's inputs.
+Dispatch a single subagent:
 
-**Output:** A 3–4 paragraph briefing document. Save this — it feeds into every remaining step.
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "Phase 1 market snapshot"
+  prompt: |
+    You are running Phase 1 of a market research workflow.
 
-**Tip:** If the user provided a website URL, use web search to pull real information from it.
-Don't fabricate positioning — ground it in what actually exists.
+    Read the research inputs from {output_dir}/00-inputs.md.
+    Read the detailed instructions from {skill_dir}/references/prompt-1-market-snapshot.md.
+
+    Follow the instructions using the inputs. If URLs were provided, use web search to pull
+    real information from them. Don't fabricate positioning — ground it in what actually exists.
+
+    Start the output with YAML frontmatter:
+    ---
+    skill_version: {version}
+    skill_name: market-research
+    phase: 1-market-snapshot
+    ---
+
+    (Read the version from the inputs file's frontmatter. Output frontmatter as raw YAML,
+    no code fences.)
+
+    Then write a brief 2-3 sentence executive summary before the full content.
+
+    Write your complete output to {output_dir}/01-market-snapshot.md.
+```
+
+Wait for the subagent to complete before proceeding to Phase 2.
 
 ### Phase 2: Voice of Customer
 
-**Goal:** Collect authentic customer quotes (~160 by default but allow the user to override this) from real online sources, organized by emotional category.
+**Goal:** Collect ~160 authentic customer quotes from real online sources, organized by
+emotional category.
 
-Read `references/prompt-2-voice-of-customer.md` and run it.
+Dispatch a coordinator subagent:
 
-This step uses web search to find real conversations on Reddit, forums, review sites, and
-social platforms. The prompt covers all eight categories, quote verification, date attribution,
-author capture, and CSV export — follow it as written.
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "Phase 2 VoC coordinator"
+  prompt: |
+    You are the Phase 2 coordinator for a market research workflow.
 
-**Output:** Organized quote bank + persona sketch + CSV file.
+    Read the research inputs from {output_dir}/00-inputs.md.
+    Read your coordinator instructions from {skill_dir}/references/prompt-2-voice-of-customer.md.
+    The per-site agent instructions are at {skill_dir}/references/prompt-site-agent.md.
+    The output directory is {output_dir}/.
+
+    Follow the coordinator instructions. They will tell you to:
+    1. Survey search to identify 8-15 relevant sites
+    2. Dispatch per-site subagents in parallel via Task tool
+    3. Consolidate results into the final output files
+    4. Clean up intermediate per-site files
+```
+
+The coordinator subagent will internally spawn per-site subagents via the Task tool. Each
+per-site agent gets its own context window for web searching, which is why this architecture
+avoids context exhaustion.
+
+Wait for the coordinator to complete before proceeding to Phase 3.
 
 ### Phase 3: Psychographic Profile
 
-**Goal:** Build a deep psychographic map across four dimensions: Identity, Problems, Dreams/Desires, Obstacles.
+**Goal:** Build a deep psychographic map across four dimensions: Identity, Problems,
+Dreams/Desires, Obstacles.
 
-Read `references/prompt-3-psychographic-profile.md` and run it.
+Dispatch a coordinator subagent:
 
-Unlike Phase 2 (which collects individual quotes), this phase looks for **thematic patterns** —
-clusters of quotes that reveal how customers think, not just what they say.
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "Phase 3 psychographic coordinator"
+  prompt: |
+    You are the Phase 3 coordinator for a market research workflow.
 
-**Output:** Themed quote clusters with pattern notes + updated persona sketch.
+    Read the research inputs from {output_dir}/00-inputs.md.
+    Read the Phase 2 output from {output_dir}/02-voice-of-customer.md.
+    Read your coordinator instructions from {skill_dir}/references/prompt-3-psychographic-profile.md.
+    The per-site agent instructions are at {skill_dir}/references/prompt-site-agent.md.
+    The output directory is {output_dir}/.
+
+    Follow the coordinator instructions. They will tell you to:
+    1. Cluster Phase 2 quotes into psychographic themes
+    2. Identify gaps in coverage
+    3. Dispatch per-site subagents for gap-filling if needed
+    4. Consolidate into the final psychographic profile
+    5. Clean up intermediate per-site files
+```
+
+Wait for the coordinator to complete before proceeding to Phase 4.
 
 ### Phase 4: Awareness & Motivation Map
 
-**Goal:** Map customer questions across Schwartz's 5 awareness stages, build desire ladders, and expose hidden motivations.
+**Goal:** Map customer questions across Schwartz's 5 awareness stages, build desire ladders,
+and expose hidden motivations.
 
-Read `references/prompt-4-awareness-map.md` and run it.
+Dispatch a single subagent:
 
-This produces three strategic tables:
-1. **Awareness Levels** — Questions buyers ask at each stage (Unaware → Most Aware)
-2. **Desire Ladders** — Surface desire → "So I can..." × 3 levels deep
-3. **Will / Won't / Can't Tell** — What customers say openly vs. hide vs. can't articulate
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "Phase 4 awareness map"
+  prompt: |
+    You are running Phase 4 of a market research workflow.
 
-**Output:** Three tables ready for use in messaging strategy.
+    Read the research inputs from {output_dir}/00-inputs.md.
+    Read the Phase 2 output from {output_dir}/02-voice-of-customer.md.
+    Read the Phase 3 output from {output_dir}/03-psychographic-profile.md.
+    Read the detailed instructions from {skill_dir}/references/prompt-4-awareness-map.md.
+
+    Follow the instructions. Ground the awareness levels, desire ladders, and hidden
+    motivations in the real customer language from Phases 2 and 3. Use the actual quotes
+    and patterns you read — don't invent generic examples.
+
+    Start the output with YAML frontmatter:
+    ---
+    skill_version: {version}
+    skill_name: market-research
+    phase: 4-awareness-motivation-map
+    ---
+
+    (Read the version from the inputs file's frontmatter. Output frontmatter as raw YAML,
+    no code fences.)
+
+    Then write a brief 2-3 sentence executive summary before the full content.
+
+    Write your complete output to {output_dir}/04-awareness-motivation-map.md.
+```
+
+Wait for the subagent to complete before proceeding to Phase 5.
 
 ### Phase 5: Feature-to-Desire Bridge
 
-**Goal:** Translate every product feature into layered benefits that connect to emotions and core human desires.
+**Goal:** Translate every product feature into layered benefits connecting facts to feelings
+and core human desires.
 
-Read `references/prompt-5-feature-desire-bridge.md` and run it.
+Dispatch a single subagent:
 
-If the user provided product URLs, use web search to extract real features. Never invent specs.
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "Phase 5 feature-desire bridge"
+  prompt: |
+    You are running Phase 5 of a market research workflow.
 
-**Output:** A comprehensive table: Feature → Why It Exists → Performance Benefit → Deeper Benefit → Dominant Emotion → Matching Desire
+    Read the research inputs from {output_dir}/00-inputs.md.
+    Read the Phase 2 output from {output_dir}/02-voice-of-customer.md.
+    Read the Phase 3 output from {output_dir}/03-psychographic-profile.md.
+    Read the Phase 4 output from {output_dir}/04-awareness-motivation-map.md.
+    Read the detailed instructions from {skill_dir}/references/prompt-5-feature-desire-bridge.md.
 
-### Assembly
+    Follow the instructions. If product URLs were provided in the inputs, use web search to
+    extract real features. Never invent features — work only with what actually exists.
 
-After all five phases, compile everything into a single research dossier. Use the template in
-`references/dossier-template.md` to structure the final output.
+    Ground the emotion and desire columns in the real customer language from prior phases.
 
-**Important:** The output must include YAML frontmatter with `skill_version` set to the value
-from `metadata.version` in this file's frontmatter. Read the version dynamically — do not
-hardcode it. The dossier template shows the exact format.
+    Start the output with YAML frontmatter:
+    ---
+    skill_version: {version}
+    skill_name: market-research
+    phase: 5-feature-desire-bridge
+    ---
 
-Save the dossier as a Markdown file and present it to the user.
+    (Read the version from the inputs file's frontmatter. Output frontmatter as raw YAML,
+    no code fences.)
 
-## Execution notes
+    Then write a brief 2-3 sentence executive summary before the full content.
 
-- **Run steps in order.** Each step builds on the last. Don't skip ahead.
-- **Use web search aggressively** in Phases 2 and 3 to find real customer language. Reddit,
-  Amazon reviews, YouTube comments, Quora, and niche forums are gold mines.
-- **Keep the user's original language.** When collecting quotes, preserve slang, typos,
-  emotional intensity. Sanitized quotes are useless for copy.
-- **The dossier is the deliverable.** The final Markdown file should be something the user can
-  print, reference, and share with their team. Make it clean and well-organized.
+    Write your complete output to {output_dir}/05-feature-desire-bridge.md.
+```
+
+Wait for the subagent to complete before proceeding to the summary.
+
+### Summary Assembly
+
+**Goal:** Produce a lightweight summary dossier that links to all phase files.
+
+Dispatch a single subagent:
+
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "Summary dossier assembly"
+  prompt: |
+    You are assembling the final summary for a market research workflow.
+
+    Read all phase output files:
+    - {output_dir}/00-inputs.md
+    - {output_dir}/01-market-snapshot.md
+    - {output_dir}/02-voice-of-customer.md
+    - {output_dir}/03-psychographic-profile.md
+    - {output_dir}/04-awareness-motivation-map.md
+    - {output_dir}/05-feature-desire-bridge.md
+
+    Read the summary template from {skill_dir}/references/dossier-template.md.
+
+    Follow the template to produce a summary dossier. The summary should contain:
+    - Overviews and key findings from each phase (NOT all 160 quotes — just highlights)
+    - The full awareness/motivation tables and feature-desire bridge table (these are compact)
+    - A file manifest showing what each output file contains
+    - Guidance on how to use the research files
+
+    Write the summary to {output_dir}/research-summary.md.
+```
+
+### Completion
+
+After the summary subagent finishes, confirm to the user that all files have been written.
+List the output directory contents and briefly describe what each file contains.
+
+## Execution Notes
+
+- **Run phases in order.** Each phase builds on the last. The orchestrator (this context)
+  dispatches them sequentially.
+- **Phases 2 and 3 have internal parallelism.** Their coordinators spawn per-site subagents
+  in parallel. The orchestrator doesn't need to manage this — the coordinator handles it.
+- **The orchestrator should NOT read reference prompt files.** Only subagents read them. This
+  keeps the main context minimal. The only files the orchestrator reads directly are
+  `version-check.md` and `migration-check.md`.
+- **Intermediate cleanup.** Phase 2 and 3 coordinators delete their `02-site-*.md` and
+  `03-site-*.md` intermediate files after consolidation. The user's output directory should
+  only contain the final files listed in the Output section above.
+- **If a subagent fails or hits limits,** inform the user which phase failed and suggest
+  rerunning just that phase. Partial results from per-site agents are preserved in
+  intermediate files until consolidation.

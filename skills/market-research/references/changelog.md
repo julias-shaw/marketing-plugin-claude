@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.4.0
+
+- Restructured skill to use subagent architecture for context efficiency
+- Each phase now produces its own standalone markdown file in a `market-research-{slug}/` directory
+- Phase 2 and 3 use parallel per-site subagents for deeper, broader web research
+- Quotes are written incrementally (partial results preserved if an agent hits limits)
+- Lightweight summary dossier (`research-summary.md`) replaces monolithic single-file dossier
+- Full quote details live in dedicated phase files (`02-voice-of-customer.md`, `03-psychographic-profile.md`)
+- New shared `prompt-site-agent.md` provides consistent instructions for per-site quote collection
+- Phase 2 and 3 coordinators automatically clean up intermediate per-site files after consolidation
+
+## 1.3.0
+
+- VOC visualization
+
 ## 1.2.0
 
 - Exports all Voice of Customer quotes to `voice-of-customer.csv` with companion `.meta` file
