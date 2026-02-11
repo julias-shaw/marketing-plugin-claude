@@ -2,3 +2,5 @@
 .idea/
 .claude-plugin/.version-cache
 skills/**/.version-cache
+.claude/settings.local.json
+
