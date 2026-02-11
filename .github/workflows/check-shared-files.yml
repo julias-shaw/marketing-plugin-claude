@@ -129,3 +129,35 @@ jobs:
           fi
 
           echo "All versions are in sync."
+
+  package-skills:
+    name: Package skill artifacts
+    needs:
+      - check-version-check-sync
+      - check-template-version-stamps
+      - check-version-sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .skill packages
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "Version: $version"
+          mkdir -p dist
+
+          for skill_dir in skills/*/; do
+            skill_name=$(basename "$skill_dir")
+            artifact_name="${skill_name}-${version}.skill"
+            echo "Packaging $skill_name → $artifact_name"
+            (cd "$skill_dir" && zip -r "../../dist/$artifact_name" .)
+          done
+
+          echo "Packaged artifacts:"
+          ls -lh dist/
+
+      - name: Upload skill artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-packages
+          path: dist/*.skill
