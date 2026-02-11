@@ -1,3 +1,13 @@
+Output the following frontmatter at the top of the artifact as raw YAML (the `---` delimiters
+only, no surrounding code fences):
+
+```
+---
+skill_version: {version from SKILL.md metadata.version}
+skill_name: prospect-psychology-audit
+---
+```
+
 # Prospect Psychology Audit — Customer Profile
 
 **Input:** [Brief description of what was analyzed — e.g., "4 voice-of-customer quotes from enterprise cybersecurity platform buyers"]

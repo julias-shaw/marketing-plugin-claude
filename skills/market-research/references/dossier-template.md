@@ -3,9 +3,19 @@
 Use this template to assemble the final research dossier after completing all five phases.
 Replace each section with the actual research output. Remove any instructional comments.
 
+**Important:** Always read the current version from `SKILL.md` `metadata.version` and insert it
+into the `skill_version` field below. Do not hardcode the version number. Output the frontmatter
+below as raw YAML (the `---` delimiters only, no surrounding code fences).
+
 ---
 
-```markdown
+```
+---
+skill_version: {version from SKILL.md metadata.version}
+skill_name: market-research
+---
+```
+
 # Market Research Dossier: {PRODUCT_NAME}
 
 **Prepared for:** {CLIENT_OR_BRAND}
@@ -16,8 +26,7 @@ Replace each section with the actual research output. Remove any instructional c
 
 ## 1. Market Snapshot
 
-{Paste the 3–4 paragraph briefing from Phase 1. This should clearly answer: Who are we
-targeting? What are we selling? What problems are we solving?}
+{Phase 1 output}
 
 ---
 
@@ -25,31 +34,43 @@ targeting? What are we selling? What problems are we solving?}
 
 ### Persona Sketch
 
-{Paste the 5–6 sentence persona sketch from Phase 2}
+{Phase 2 persona sketch}
 
 ### Fears
 
-{Numbered list of ~20 quotes with sources}
+{Phase 2 quotes}
 
 ### Frustrations
 
-{Numbered list of ~20 quotes with sources}
+{Phase 2 quotes}
 
 ### Wants
 
-{Numbered list of ~20 quotes with sources}
+{Phase 2 quotes}
 
 ### Beliefs
 
-{Numbered list of ~20 quotes with sources}
+{Phase 2 quotes}
 
 ### Joys
 
-{Numbered list of ~20 quotes with sources}
+{Phase 2 quotes}
+
+### Objections
+
+{Phase 2 quotes}
+
+### Triggers
+
+{Phase 2 quotes}
+
+### Comparisons
+
+{Phase 2 quotes}
 
 ### Confidence Notes
 
-{Note which quotes are verified, paraphrased, or from thin sources}
+{Phase 2 confidence notes}
 
 ---
 
@@ -57,23 +78,23 @@ targeting? What are we selling? What problems are we solving?}
 
 ### Updated Persona Sketch
 
-{Paste the refined persona sketch from Phase 3}
+{Phase 3 persona sketch}
 
 ### Identity Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ### Problem Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ### Dreams & Desires Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ### Obstacle Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ---
 
@@ -116,12 +137,20 @@ targeting? What are we selling? What problems are we solving?}
 - **For headlines & hooks:** Pull from the strongest quotes in Section 2 (Voice of Customer)
 - **For email sequences:** Use the Awareness Levels table (Section 4) to match messaging to buyer stage
 - **For landing pages:** Lead with Desires and Emotions from Section 5, backed by Features
-- **For objection handling:** Reference the Won't Tell and Can't Tell columns in Section 4
+- **For objection handling:** Use Objections quotes (Section 2) + Won't Tell and Can't Tell columns (Section 4)
+- **For retargeting & win-back:** Use Triggers (Section 2) to time messages around catalytic moments
+- **For competitive positioning:** Use Comparisons (Section 2) to address how prospects evaluate alternatives
 - **For brand voice:** Use the Identity themes in Section 3 to mirror how customers see themselves
 - **For ad copy:** Combine Fears/Frustrations (Section 2) with Dreams/Desires (Section 3)
+- **For spreadsheet analysis:** Import `voice-of-customer.csv` to filter, sort, and pivot quotes by category, source, or date
 
 ---
 
 *Research methodology based on Eugene Schwartz's Breakthrough Advertising framework.*
 *AI-assisted research — all quotes should be verified before use in final copy.*
-```
+
+## Companion file: voice-of-customer.csv
+
+All Voice of Customer quotes (Section 2) are also exported to `voice-of-customer.csv` for
+filtering, sorting, and importing into other tools. Columns:
+`Quote,Date,Type,URL,Source,Author,Category`

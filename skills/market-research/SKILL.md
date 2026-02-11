@@ -1,5 +1,8 @@
 ---
 name: market-research
+metadata:
+  version: 1.2.0
+  repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Run a structured 5-step AI-powered market research workflow based on Eugene Schwartz's
   research methodology. Produces a comprehensive research dossier that maps customer language,
@@ -7,9 +10,12 @@ description: >
   Use this skill whenever the user wants to deeply understand their target market, do customer
   research, build buyer personas, prepare for copywriting, plan messaging strategy, or says
   things like "research my audience", "understand my customers", "who is my buyer",
-  "customer insights", "market analysis for copy", or "voice of customer research".
+  "customer insights", "market analysis for copy", "voice of customer research",
+  "Schwartz research", "customer language mining", "psychographic research",
+  "awareness level mapping", "desire ladder", or "feature-to-benefit analysis".
   Also trigger when the user wants to improve landing pages, emails, or ads by better
-  understanding who they're writing to.
+  understanding who they're writing to, or when they ask for a "research dossier",
+  "customer intelligence report", or "market deep dive".
 ---
 
 # Market Research Skill
@@ -20,11 +26,34 @@ understanding markets since 1966.
 
 ## Output
 
-A single Markdown research dossier (see `references/dossier-template.md` for structure) covering:
-market snapshot, voice of customer (100 quotes), psychographic profile, awareness & motivation
-map, and feature-to-desire bridge.
+Three deliverables:
+
+1. A **Markdown research dossier** (see `references/dossier-template.md` for structure) covering:
+   market snapshot, voice of customer (~160 quotes), psychographic profile, awareness & motivation
+   map, and feature-to-desire bridge.
+2. A **`voice-of-customer.csv`** file containing every quote from Phase 2 in a structured,
+   filterable format. Columns: `Quote,Date,Type,URL,Source,Author,Category`.
+3. A **`voice-of-customer.csv.meta`** companion file with YAML metadata (skill name, version,
+   creation date, column list) so migration tooling can detect the CSV's version.
 
 ## Workflow
+
+### Version Check
+
+Before starting, read `references/version-check.md` and follow the version check
+procedure. Do not skip this step — but if the check fails, warn the user and continue.
+
+### Artifact Migration
+
+If the user provides an existing artifact (a previously generated dossier or CSV file), or
+explicitly asks to "migrate this" or "update this to the latest format":
+
+1. Read `references/migration-check.md` and follow the detection procedure.
+2. If the artifact is outdated, offer to migrate it before proceeding with any new work.
+3. If the user just wants the migration (not a full rerun), perform the migration and stop.
+
+This also applies if the user pastes dossier content inline — check for the `skill_version`
+frontmatter to determine whether it's current.
 
 ### Phase 0: Gather Inputs
 
@@ -39,7 +68,7 @@ Ask the user:
 
 Also ask for:
 - Brand website URL (if available)
-- 1–2 competitor URLs (if available)
+- 1-2 competitor URLs (if available)
 - Any existing customer research, testimonials, or review links
 
 Store these inputs — they get pasted into every subsequent step.
@@ -50,7 +79,7 @@ If the user has partial answers, that's fine. Step 1 will help fill the gaps.
 
 **Goal:** Establish a clear, concise foundation — target customer, product positioning, core problems.
 
-Read `references/prompts.md` → Section "Prompt 1: Market Snapshot" and run it with the user's inputs.
+Read `references/prompt-1-market-snapshot.md` and run it with the user's inputs.
 
 **Output:** A 3–4 paragraph briefing document. Save this — it feeds into every remaining step.
 
@@ -59,24 +88,21 @@ Don't fabricate positioning — ground it in what actually exists.
 
 ### Phase 2: Voice of Customer
 
-**Goal:** Collect 100 authentic customer quotes from real online sources, organized by emotional category.
+**Goal:** Collect authentic customer quotes (~160 by default but allow the user to override this) from real online sources, organized by emotional category.
 
-Read `references/prompts.md` → Section "Prompt 2: Voice of Customer" and run it.
+Read `references/prompt-2-voice-of-customer.md` and run it.
 
 This step uses web search to find real conversations on Reddit, forums, review sites, and
-social platforms. For each of the five categories (fears, frustrations, wants, beliefs, joys),
-gather ~20 quotes.
+social platforms. The prompt covers all eight categories, quote verification, date attribution,
+author capture, and CSV export — follow it as written.
 
-**Critical:** Always cite sources. Flag clearly if any quotes could not be verified. AI
-hallucination of quotes is a known risk — be transparent about confidence levels.
-
-**Output:** Organized quote bank + persona sketch.
+**Output:** Organized quote bank + persona sketch + CSV file.
 
 ### Phase 3: Psychographic Profile
 
 **Goal:** Build a deep psychographic map across four dimensions: Identity, Problems, Dreams/Desires, Obstacles.
 
-Read `references/prompts.md` → Section "Prompt 3: Psychographic Profile" and run it.
+Read `references/prompt-3-psychographic-profile.md` and run it.
 
 Unlike Phase 2 (which collects individual quotes), this phase looks for **thematic patterns** —
 clusters of quotes that reveal how customers think, not just what they say.
@@ -87,7 +113,7 @@ clusters of quotes that reveal how customers think, not just what they say.
 
 **Goal:** Map customer questions across Schwartz's 5 awareness stages, build desire ladders, and expose hidden motivations.
 
-Read `references/prompts.md` → Section "Prompt 4: Awareness & Motivation Map" and run it.
+Read `references/prompt-4-awareness-map.md` and run it.
 
 This produces three strategic tables:
 1. **Awareness Levels** — Questions buyers ask at each stage (Unaware → Most Aware)
@@ -100,7 +126,7 @@ This produces three strategic tables:
 
 **Goal:** Translate every product feature into layered benefits that connect to emotions and core human desires.
 
-Read `references/prompts.md` → Section "Prompt 5: Feature-to-Desire Bridge" and run it.
+Read `references/prompt-5-feature-desire-bridge.md` and run it.
 
 If the user provided product URLs, use web search to extract real features. Never invent specs.
 
@@ -111,6 +137,10 @@ If the user provided product URLs, use web search to extract real features. Neve
 After all five phases, compile everything into a single research dossier. Use the template in
 `references/dossier-template.md` to structure the final output.
 
+**Important:** The output must include YAML frontmatter with `skill_version` set to the value
+from `metadata.version` in this file's frontmatter. Read the version dynamically — do not
+hardcode it. The dossier template shows the exact format.
+
 Save the dossier as a Markdown file and present it to the user.
 
 ## Execution notes
@@ -118,8 +148,6 @@ Save the dossier as a Markdown file and present it to the user.
 - **Run steps in order.** Each step builds on the last. Don't skip ahead.
 - **Use web search aggressively** in Phases 2 and 3 to find real customer language. Reddit,
   Amazon reviews, YouTube comments, Quora, and niche forums are gold mines.
-- **Be honest about confidence.** If you can't verify a quote, say so. If a source is thin,
-  flag it. The user needs to trust this research.
 - **Keep the user's original language.** When collecting quotes, preserve slang, typos,
   emotional intensity. Sanitized quotes are useless for copy.
 - **The dossier is the deliverable.** The final Markdown file should be something the user can
