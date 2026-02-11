@@ -138,27 +138,52 @@ jobs:
       - check-template-version-stamps
       - check-version-sync
     runs-on: ubuntu-latest
+    outputs:
+      artifacts: ${{ steps.build.outputs.artifacts }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Build .skill packages
+        id: build
         run: |
           version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
           echo "Version: $version"
           mkdir -p dist
 
+          artifacts="[]"
           for skill_dir in skills/*/; do
             skill_name=$(basename "$skill_dir")
             artifact_name="${skill_name}-${version}.skill"
             echo "Packaging $skill_name → $artifact_name"
             (cd "$skill_dir" && zip -r "../../dist/$artifact_name" .)
+            artifacts=$(echo "$artifacts" | python3 -c "import sys,json; a=json.load(sys.stdin); a.append('$artifact_name'); print(json.dumps(a))")
           done
 
           echo "Packaged artifacts:"
           ls -lh dist/
+          echo "artifacts=$artifacts" >> "$GITHUB_OUTPUT"
 
-      - name: Upload skill artifacts
+      - name: Upload dist for next job
         uses: actions/upload-artifact@v4
         with:
-          name: skill-packages
-          path: dist/*.skill
+          name: dist
+          path: dist/
+
+  upload-skills:
+    name: Upload ${{ matrix.artifact }}
+    needs: package-skills
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        artifact: ${{ fromJson(needs.package-skills.outputs.artifacts) }}
+    steps:
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+
+      - name: Upload ${{ matrix.artifact }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
