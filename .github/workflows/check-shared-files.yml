@@ -131,59 +131,49 @@ jobs:
 
           echo "All versions are in sync."
 
-  package-skills:
-    name: Package skill artifacts
+  discover-skills:
+    name: Discover skills
     needs:
       - check-version-check-sync
       - check-template-version-stamps
       - check-version-sync
     runs-on: ubuntu-latest
     outputs:
-      artifacts: ${{ steps.build.outputs.artifacts }}
+      skills: ${{ steps.discover.outputs.skills }}
+      version: ${{ steps.discover.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build .skill packages
-        id: build
+      - name: Discover skill names and version
+        id: discover
         run: |
           version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          skills=$(ls -d skills/*/ | xargs -n1 basename | python3 -c "import sys,json; print(json.dumps(sys.stdin.read().split()))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "skills=$skills" >> "$GITHUB_OUTPUT"
           echo "Version: $version"
-          mkdir -p dist
+          echo "Skills: $skills"
 
-          artifacts="[]"
-          for skill_dir in skills/*/; do
-            skill_name=$(basename "$skill_dir")
-            artifact_name="${skill_name}-${version}.skill"
-            echo "Packaging $skill_name → $artifact_name"
-            (cd "$skill_dir" && zip -r "../../dist/$artifact_name" .)
-            artifacts=$(echo "$artifacts" | python3 -c "import sys,json; a=json.load(sys.stdin); a.append('$artifact_name'); print(json.dumps(a))")
-          done
-
-          echo "Packaged artifacts:"
-          ls -lh dist/
-          echo "artifacts=$artifacts" >> "$GITHUB_OUTPUT"
-
-      - name: Upload dist for next job
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-  upload-skills:
-    name: Upload ${{ matrix.artifact }}
-    needs: package-skills
+  package-skill:
+    name: Package ${{ matrix.skill }}
+    needs: discover-skills
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        artifact: ${{ fromJson(needs.package-skills.outputs.artifacts) }}
+        skill: ${{ fromJson(needs.discover-skills.outputs.skills) }}
     steps:
-      - name: Download dist
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
+      - uses: actions/checkout@v4
 
-      - name: Upload ${{ matrix.artifact }}
+      - name: Build .skill package
+        run: |
+          version="${{ needs.discover-skills.outputs.version }}"
+          artifact_name="${{ matrix.skill }}-${version}.skill"
+          echo "Packaging ${{ matrix.skill }} → $artifact_name"
+          (cd "skills/${{ matrix.skill }}" && zip -r "../../$artifact_name" .)
+          ls -lh "$artifact_name"
+
+      - name: Upload ${{ matrix.skill }} artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
+          name: ${{ matrix.skill }}-${{ needs.discover-skills.outputs.version }}.skill
+          path: ${{ matrix.skill }}-${{ needs.discover-skills.outputs.version }}.skill
