@@ -1,7 +1,7 @@
 ---
 name: market-research
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Run a structured 5-step AI-powered market research workflow based on Eugene Schwartz's

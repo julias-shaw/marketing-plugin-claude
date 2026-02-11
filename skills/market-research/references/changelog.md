@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+- VOC visualization
+
 ## 1.2.0
 
 - Exports all Voice of Customer quotes to `voice-of-customer.csv` with companion `.meta` file
