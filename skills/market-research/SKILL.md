@@ -26,13 +26,15 @@ understanding markets since 1966.
 
 ## Output
 
-Two deliverables:
+Three deliverables:
 
 1. A **Markdown research dossier** (see `references/dossier-template.md` for structure) covering:
    market snapshot, voice of customer (~160 quotes), psychographic profile, awareness & motivation
    map, and feature-to-desire bridge.
 2. A **`voice-of-customer.csv`** file containing every quote from Phase 2 in a structured,
    filterable format. Columns: `Quote,Date,Type,URL,Source,Author,Category`.
+3. A **`voice-of-customer.csv.meta`** companion file with YAML metadata (skill name, version,
+   creation date, column list) so migration tooling can detect the CSV's version.
 
 ## Workflow
 

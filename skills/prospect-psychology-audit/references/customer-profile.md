@@ -1,3 +1,6 @@
+Output the following frontmatter at the top of the artifact as raw YAML (the `---` delimiters
+only, no surrounding code fences):
+
 ```
 ---
 skill_version: {version from SKILL.md metadata.version}

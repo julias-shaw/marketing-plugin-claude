@@ -4,7 +4,8 @@ Use this template to assemble the final research dossier after completing all fi
 Replace each section with the actual research output. Remove any instructional comments.
 
 **Important:** Always read the current version from `SKILL.md` `metadata.version` and insert it
-into the `skill_version` field below. Do not hardcode the version number.
+into the `skill_version` field below. Do not hardcode the version number. Output the frontmatter
+below as raw YAML (the `---` delimiters only, no surrounding code fences).
 
 ---
 
