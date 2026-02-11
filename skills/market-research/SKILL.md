@@ -20,9 +20,13 @@ understanding markets since 1966.
 
 ## Output
 
-A single Markdown research dossier (see `references/dossier-template.md` for structure) covering:
-market snapshot, voice of customer (100 quotes), psychographic profile, awareness & motivation
-map, and feature-to-desire bridge.
+Two deliverables:
+
+1. A **Markdown research dossier** (see `references/dossier-template.md` for structure) covering:
+   market snapshot, voice of customer (~160 quotes), psychographic profile, awareness & motivation
+   map, and feature-to-desire bridge.
+2. A **`voice-of-customer.csv`** file containing every quote from Phase 2 in a structured,
+   filterable format. Columns: `Quote,Date,Type,URL,Source,Author,Category`.
 
 ## Workflow
 
@@ -59,18 +63,27 @@ Don't fabricate positioning — ground it in what actually exists.
 
 ### Phase 2: Voice of Customer
 
-**Goal:** Collect 100 authentic customer quotes from real online sources, organized by emotional category.
+**Goal:** Collect authentic customer quotes (~160 by deafult but allow the user to override this) from real online sources, organized by emotional category.
 
 Read `references/prompts.md` → Section "Prompt 2: Voice of Customer" and run it.
 
 This step uses web search to find real conversations on Reddit, forums, review sites, and
-social platforms. For each of the five categories (fears, frustrations, wants, beliefs, joys),
-gather ~20 quotes.
+social platforms. For each of the eight categories (fears, frustrations, wants, beliefs, joys,
+objections, triggers, comparisons), gather quotes (~20  by default but allow the user to override this).
 
 **Critical:** Always cite sources. Flag clearly if any quotes could not be verified. AI
 hallucination of quotes is a known risk — be transparent about confidence levels.
 
-**Output:** Organized quote bank + persona sketch.
+**Dates:** Every quote must include the date it was posted, formatted like `(Jan 3, 2025)` after
+the source. If the date isn't visible on the page, check the Wayback Machine
+(web.archive.org) to find when the content was first captured. If the date still can't be
+determined, write `(Date Unknown)`.
+
+**CSV output:** After collecting all quotes, write them to a `voice-of-customer.csv` file with
+these columns: `Quote,Date,Type,URL,Source,Author,Category`. See the prompt template for
+column definitions and formatting rules.
+
+**Output:** Organized quote bank + persona sketch + CSV file.
 
 ### Phase 3: Psychographic Profile
 
@@ -118,8 +131,15 @@ Save the dossier as a Markdown file and present it to the user.
 - **Run steps in order.** Each step builds on the last. Don't skip ahead.
 - **Use web search aggressively** in Phases 2 and 3 to find real customer language. Reddit,
   Amazon reviews, YouTube comments, Quora, and niche forums are gold mines.
+- **Verify every quote.** Before saving a quote, re-visit its source URL and confirm the
+  quote actually appears on the page. If it doesn't, discard it and find a real one. Never
+  guess or reconstruct quotes from memory.
 - **Be honest about confidence.** If you can't verify a quote, say so. If a source is thin,
   flag it. The user needs to trust this research.
+- **Date every quote.** Include the post date after the source in the format `(Mon D, YYYY)`,
+  e.g. `(Jan 3, 2025)`. If a page doesn't show the date, use the Wayback Machine
+  (web.archive.org) to find when it was first archived. If no date can be found at all,
+  write `(Date Unknown)`.
 - **Keep the user's original language.** When collecting quotes, preserve slang, typos,
   emotional intensity. Sanitized quotes are useless for copy.
 - **The dossier is the deliverable.** The final Markdown file should be something the user can

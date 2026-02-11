@@ -29,23 +29,35 @@ targeting? What are we selling? What problems are we solving?}
 
 ### Fears
 
-{Numbered list of ~20 quotes with sources}
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
 
 ### Frustrations
 
-{Numbered list of ~20 quotes with sources}
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
 
 ### Wants
 
-{Numbered list of ~20 quotes with sources}
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
 
 ### Beliefs
 
-{Numbered list of ~20 quotes with sources}
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
 
 ### Joys
 
-{Numbered list of ~20 quotes with sources}
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+
+### Objections
+
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+
+### Triggers
+
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+
+### Comparisons
+
+{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
 
 ### Confidence Notes
 
@@ -61,19 +73,19 @@ targeting? What are we selling? What problems are we solving?}
 
 ### Identity Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{For each theme: name, quotes with sources and dates, pattern note}
 
 ### Problem Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{For each theme: name, quotes with sources and dates, pattern note}
 
 ### Dreams & Desires Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{For each theme: name, quotes with sources and dates, pattern note}
 
 ### Obstacle Themes
 
-{For each theme: name, quotes with sources, pattern note}
+{For each theme: name, quotes with sources and dates, pattern note}
 
 ---
 
@@ -116,12 +128,21 @@ targeting? What are we selling? What problems are we solving?}
 - **For headlines & hooks:** Pull from the strongest quotes in Section 2 (Voice of Customer)
 - **For email sequences:** Use the Awareness Levels table (Section 4) to match messaging to buyer stage
 - **For landing pages:** Lead with Desires and Emotions from Section 5, backed by Features
-- **For objection handling:** Reference the Won't Tell and Can't Tell columns in Section 4
+- **For objection handling:** Use Objections quotes (Section 2) + Won't Tell and Can't Tell columns (Section 4)
+- **For retargeting & win-back:** Use Triggers (Section 2) to time messages around catalytic moments
+- **For competitive positioning:** Use Comparisons (Section 2) to address how prospects evaluate alternatives
 - **For brand voice:** Use the Identity themes in Section 3 to mirror how customers see themselves
 - **For ad copy:** Combine Fears/Frustrations (Section 2) with Dreams/Desires (Section 3)
+- **For spreadsheet analysis:** Import `voice-of-customer.csv` to filter, sort, and pivot quotes by category, source, or date
 
 ---
 
 *Research methodology based on Eugene Schwartz's Breakthrough Advertising framework.*
 *AI-assisted research — all quotes should be verified before use in final copy.*
+
+## Companion file: voice-of-customer.csv
+
+All Voice of Customer quotes (Section 2) are also exported to `voice-of-customer.csv` for
+filtering, sorting, and importing into other tools. Columns:
+`Quote,Date,Type,URL,Source,Author,Category`
 ```
