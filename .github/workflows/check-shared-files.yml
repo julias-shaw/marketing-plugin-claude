@@ -167,5 +167,5 @@ jobs:
       - name: Upload ${{ matrix.skill }} artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.skill }}-${{ needs.discover-skills.outputs.version }}
+          name: ${{ matrix.skill }}
           path: skills/${{ matrix.skill }}/
