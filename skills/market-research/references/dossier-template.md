@@ -3,7 +3,17 @@
 Use this template to assemble the final research dossier after completing all five phases.
 Replace each section with the actual research output. Remove any instructional comments.
 
+**Important:** Always read the current version from `SKILL.md` `metadata.version` and insert it
+into the `skill_version` field below. Do not hardcode the version number.
+
 ---
+
+```
+---
+skill_version: {version from SKILL.md metadata.version}
+skill_name: market-research
+---
+```
 
 # Market Research Dossier: {PRODUCT_NAME}
 

@@ -92,6 +92,21 @@ Rules for the CSV:
 - One row per quote, no blank rows
 - Include the header row
 
+META FILE:
+After creating `voice-of-customer.csv`, also create a companion file named
+`voice-of-customer.csv.meta` with the following YAML content:
+
+```yaml
+skill_name: market-research
+skill_version: {version from SKILL.md metadata.version}
+created_at: {today's date as YYYY-MM-DD}
+columns: Quote,Date,Type,URL,Source,Author,Category
+```
+
+This `.meta` file allows migration tooling to detect the skill version that produced the CSV,
+since CSV files cannot contain YAML frontmatter. Always read the version dynamically from
+`SKILL.md` `metadata.version` — do not hardcode it.
+
 CONFIDENCE NOTES:
 After the output, add a brief note indicating:
 - Which quotes were pulled from verified, linkable sources

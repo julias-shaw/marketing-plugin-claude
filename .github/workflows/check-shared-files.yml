@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - 'skills/**/references/version-check.md'
+      - 'skills/**/references/dossier-template.md'
+      - 'skills/**/references/content-audit.md'
+      - 'skills/**/references/customer-profile.md'
+      - 'skills/**/migrations/**'
       - 'skills/**/SKILL.md'
       - '.claude-plugin/plugin.json'
 
@@ -46,6 +50,46 @@ jobs:
           fi
 
           echo "All version-check.md files are identical."
+
+  check-template-version-stamps:
+    name: Output templates must contain skill_version frontmatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check output templates for skill_version
+        run: |
+          all_ok=true
+
+          templates=(
+            "skills/market-research/references/dossier-template.md"
+            "skills/prospect-psychology-audit/references/content-audit.md"
+            "skills/prospect-psychology-audit/references/customer-profile.md"
+          )
+
+          for template in "${templates[@]}"; do
+            if [ ! -f "$template" ]; then
+              echo "::error::Template file not found: $template"
+              all_ok=false
+              continue
+            fi
+
+            if ! grep -q "skill_version" "$template"; then
+              echo "::error::Missing skill_version in frontmatter: $template"
+              all_ok=false
+            else
+              echo "$template: contains skill_version (ok)"
+            fi
+          done
+
+          if [ "$all_ok" = false ]; then
+            echo ""
+            echo "All output templates must include skill_version in their YAML frontmatter."
+            echo "This ensures artifacts can be version-detected for future migrations."
+            exit 1
+          fi
+
+          echo "All output templates contain skill_version."
 
   check-version-sync:
     name: SKILL.md versions must match plugin.json

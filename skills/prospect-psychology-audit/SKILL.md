@@ -36,6 +36,10 @@ Before conducting any assessment, read `references/version-check.md` and follow 
 version check procedure. Do not skip this step — but if the check fails, warn the user and
 continue.
 
+If the user provides an existing artifact (a previously generated content audit or customer
+profile), read `references/migration-check.md` and follow the detection procedure. If the
+artifact is outdated, offer to migrate it before proceeding.
+
 Then read the reference files for all three frameworks:
 - `references/eisenberg-temperaments.md`
 - `references/hughes-decision-pillars.md`
@@ -146,5 +150,9 @@ Each mode has its own template. Read the appropriate template before writing the
 - **Customer Profile Audit** → use `references/customer-profile.md`
 
 The two templates share the same three rating tables but differ in their Synthesis sections. The key difference: Content Audits end with **Recommendations** (how to improve the content), while Customer Profile Audits end with **Messaging Implications** (how to communicate with this customer based on their profile).
+
+**Important:** The output must include YAML frontmatter with `skill_version` set to the value
+from `metadata.version` in this file's frontmatter. Read the version dynamically — do not
+hardcode it. The output templates show the exact format.
 
 Keep the output scannable — the ratings tables are the core deliverable, and the prose sections should be concise. Save the completed audit as a markdown file and present it to the user.

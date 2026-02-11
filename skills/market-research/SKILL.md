@@ -41,6 +41,18 @@ Two deliverables:
 Before starting, read `references/version-check.md` and follow the version check
 procedure. Do not skip this step — but if the check fails, warn the user and continue.
 
+### Artifact Migration
+
+If the user provides an existing artifact (a previously generated dossier or CSV file), or
+explicitly asks to "migrate this" or "update this to the latest format":
+
+1. Read `references/migration-check.md` and follow the detection procedure.
+2. If the artifact is outdated, offer to migrate it before proceeding with any new work.
+3. If the user just wants the migration (not a full rerun), perform the migration and stop.
+
+This also applies if the user pastes dossier content inline — check for the `skill_version`
+frontmatter to determine whether it's current.
+
 ### Phase 0: Gather Inputs
 
 Before running any research, collect three pieces of context from the user. These are required
@@ -122,6 +134,10 @@ If the user provided product URLs, use web search to extract real features. Neve
 
 After all five phases, compile everything into a single research dossier. Use the template in
 `references/dossier-template.md` to structure the final output.
+
+**Important:** The output must include YAML frontmatter with `skill_version` set to the value
+from `metadata.version` in this file's frontmatter. Read the version dynamically — do not
+hardcode it. The dossier template shows the exact format.
 
 Save the dossier as a Markdown file and present it to the user.
 
