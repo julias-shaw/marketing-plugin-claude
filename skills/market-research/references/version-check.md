@@ -10,10 +10,10 @@ This check should be fast and non-blocking. If anything fails, warn the user and
 ## Step 1: Read the Local Version
 
 Read the YAML frontmatter at the top of the skill's own `SKILL.md` file and extract the
-`version` and `repository` fields.
+`version` and `repository` fields from inside the `metadata` block.
 
-- `version` is the local version (semver, e.g. `1.2.0`)
-- `repository` is the GitHub repo URL (e.g. `https://github.com/julias-shaw/marketing-plugin-claude`)
+- `metadata.version` is the local version (semver, e.g. `1.2.0`)
+- `metadata.repository` is the GitHub repo URL (e.g. `https://github.com/julias-shaw/marketing-plugin-claude`)
 
 These fields are embedded in every skill so the version check works even when the skill is
 distributed standalone (e.g. as a zip) without the rest of the plugin.
@@ -82,10 +82,11 @@ If the user is outdated, show them a concise update notice **before** running th
 
 ### 5a: Fetch the Changelog
 
-Fetch the remote `CHANGELOG.md` using the same raw content approach:
+Determine the skill's directory name (e.g. `market-research` or `prospect-psychology-audit`)
+and fetch its changelog from the remote repo:
 
 ```
-https://raw.githubusercontent.com/{owner}/{repo}/main/CHANGELOG.md
+https://raw.githubusercontent.com/{owner}/{repo}/main/skills/{skill-name}/references/changelog.md
 ```
 
 Extract changelog entries for versions **newer than** the user's local version. Show only
@@ -122,16 +123,3 @@ Ask the user if they want to:
 If the user chooses to skip, run the skill normally. Do not ask again during this
 conversation (the 24-hour cache handles suppression across conversations).
 
----
-
-## Notes
-
-- **Never block the skill from running.** The version check is informational. If anything
-  in this procedure fails, warn and continue.
-- **Cache location:** `.version-cache` lives in each skill's directory and should be
-  gitignored so it stays local.
-- **The CHANGELOG.md at the plugin root** is the source of truth for "what's new" messaging.
-  Keep it updated with every version bump.
-- **Semver only:** This procedure assumes versions follow `major.minor.patch` format.
-- **This file is duplicated** across all skills in the plugin. A GitHub Actions check
-  ensures all copies stay identical — PRs will be blocked if they diverge.

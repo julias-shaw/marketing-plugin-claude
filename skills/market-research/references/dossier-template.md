@@ -5,7 +5,6 @@ Replace each section with the actual research output. Remove any instructional c
 
 ---
 
-```markdown
 # Market Research Dossier: {PRODUCT_NAME}
 
 **Prepared for:** {CLIENT_OR_BRAND}
@@ -16,8 +15,7 @@ Replace each section with the actual research output. Remove any instructional c
 
 ## 1. Market Snapshot
 
-{Paste the 3–4 paragraph briefing from Phase 1. This should clearly answer: Who are we
-targeting? What are we selling? What problems are we solving?}
+{Phase 1 output}
 
 ---
 
@@ -25,43 +23,43 @@ targeting? What are we selling? What problems are we solving?}
 
 ### Persona Sketch
 
-{Paste the 5–6 sentence persona sketch from Phase 2}
+{Phase 2 persona sketch}
 
 ### Fears
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Frustrations
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Wants
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Beliefs
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Joys
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Objections
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Triggers
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Comparisons
 
-{Numbered list of ~20 quotes with sources and dates, e.g. "Quote." — u/username, [source](url) (Jan 3, 2025)}
+{Phase 2 quotes}
 
 ### Confidence Notes
 
-{Note which quotes are verified, paraphrased, or from thin sources}
+{Phase 2 confidence notes}
 
 ---
 
@@ -69,23 +67,23 @@ targeting? What are we selling? What problems are we solving?}
 
 ### Updated Persona Sketch
 
-{Paste the refined persona sketch from Phase 3}
+{Phase 3 persona sketch}
 
 ### Identity Themes
 
-{For each theme: name, quotes with sources and dates, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ### Problem Themes
 
-{For each theme: name, quotes with sources and dates, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ### Dreams & Desires Themes
 
-{For each theme: name, quotes with sources and dates, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ### Obstacle Themes
 
-{For each theme: name, quotes with sources and dates, pattern note}
+{Phase 3 themed clusters with pattern notes}
 
 ---
 
@@ -145,4 +143,3 @@ targeting? What are we selling? What problems are we solving?}
 All Voice of Customer quotes (Section 2) are also exported to `voice-of-customer.csv` for
 filtering, sorting, and importing into other tools. Columns:
 `Quote,Date,Type,URL,Source,Author,Category`
-```

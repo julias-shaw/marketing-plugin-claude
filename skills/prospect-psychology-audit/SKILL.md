@@ -1,7 +1,8 @@
 ---
 name: prospect-psychology-audit
-version: 1.2.0
-repository: https://github.com/julias-shaw/marketing-plugin-claude
+metadata:
+  version: 1.2.0
+  repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Assess marketing content or customer profiles against three buyer psychology frameworks:
   Eisenberg's Four Buying Temperaments, Hughes' 6MX Decision Pillars, and Schwartz's
@@ -11,8 +12,10 @@ description: >
   or voice-of-customer (VoC) quotes, find blind spots in messaging, or understand which
   psychological profiles their content is serving vs. ignoring. Also trigger when the user
   mentions buyer temperaments, decision styles, awareness levels, persuasion architecture,
-  or prospect psychology in the context of marketing content. Works with any text-based
-  marketing input — paste it in, upload a file, or provide a URL for analysis.
+  prospect psychology, "score my copy", "audit my landing page", "buyer personality analysis",
+  "messaging blind spots", "who does my content attract", or "psychological profile of my
+  audience" in the context of marketing content. Works with any text-based marketing input —
+  paste it in, upload a file, or provide a URL for analysis.
 ---
 
 # Prospect Psychology Audit
@@ -87,6 +90,8 @@ Work through each framework systematically. For every dimension, provide:
 1. **The rating** (from the scale for that framework)
 2. **A brief justification** citing specific content elements that support the rating (1-3 sentences)
 
+Read `references/scoring-guide.md` for calibration principles and edge-case guidance before scoring.
+
 #### Eisenberg Temperaments (4 ratings)
 
 Rate each: **Strongly Repels | Repels | Neutral | Attracts | Strongly Attracts**
@@ -143,31 +148,3 @@ Each mode has its own template. Read the appropriate template before writing the
 The two templates share the same three rating tables but differ in their Synthesis sections. The key difference: Content Audits end with **Recommendations** (how to improve the content), while Customer Profile Audits end with **Messaging Implications** (how to communicate with this customer based on their profile).
 
 Keep the output scannable — the ratings tables are the core deliverable, and the prose sections should be concise. Save the completed audit as a markdown file and present it to the user.
-
----
-
-## Scoring Principles
-
-These principles help ensure consistent, well-calibrated ratings:
-
-**Ground every rating in observable evidence.** Never rate based on what the content *could* include. Rate based on what's actually there. If there's no evidence for a dimension, the default is Neutral (not Attracts).
-
-**Distinguish "not addressed" from "actively repels."** Content that simply ignores Methodical buyers (no specs, no FAQ, but also no hype) is Neutral. Content that is *all* hype, urgency, and emotional pressure with zero substance actively repels Methodical buyers — that's Repels or Strongly Repels.
-
-**Respect the tension between pillars.** If content strongly activates Conformity ("most popular choice, trusted by thousands"), it will likely score lower on Deviance — and that's expected, not a flaw. Note the tradeoff rather than penalizing it.
-
-**For customer profiles, match language to frameworks.** When a VoC quote says "I just need something that works, I don't have time to research," that's strong Necessity + Spontaneous signal. When they say "I spent weeks comparing every option before choosing," that's Methodical + Investment. Let the customer's own words drive the ratings.
-
-**The awareness level rating is about fit, not quality.** A brilliant Most Aware sales page (discount code, buy button, zero education) would score Neutral for Unaware — and that's correct. The content isn't bad; it's just not built for that stage.
-
----
-
-## Edge Cases
-
-**Mixed content (e.g., full website with multiple pages):** Assess the overall impression. If distinct pages serve different functions (homepage vs. pricing vs. about), note which pages serve which profiles. The primary rating should reflect the aggregate experience.
-
-**Very short content (e.g., a single ad or headline):** Short content naturally covers fewer dimensions. Rate what's present and mark unaddressed dimensions as Neutral. Don't over-infer from limited material — note the constraint in the synthesis.
-
-**VoC quotes that contradict each other:** If the VoC set comes from multiple customers, different quotes may map to different profiles. Note this explicitly — it likely means the customer base is psychologically diverse, which is useful information for the user.
-
-**Content in a non-English language:** Apply the same frameworks. Buyer psychology is cross-cultural, though cultural context may shift which pillars are baseline expectations vs. differentiators. Note any relevant cultural considerations.
