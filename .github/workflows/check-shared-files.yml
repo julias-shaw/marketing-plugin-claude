@@ -12,10 +12,30 @@ on:
       - 'skills/**/migrations/**'
       - 'skills/**/SKILL.md'
       - '.claude-plugin/plugin.json'
+      - '.github/**'
 
 jobs:
+  check-plugin-version:
+    name: Plugin version must not already be tagged
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check version tag does not exist
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "Plugin version: $version"
+          if git tag -l "v${version}" | grep -q .; then
+            echo "::error::Tag v${version} already exists. Update the version in .claude-plugin/plugin.json before proceeding."
+            exit 1
+          fi
+          echo "Tag v${version} does not exist yet."
+
   check-version-check-sync:
     name: version-check.md files must be identical
+    needs: check-plugin-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,6 +75,7 @@ jobs:
 
   check-template-version-stamps:
     name: Output templates must contain skill_version frontmatter
+    needs: check-plugin-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -95,6 +116,7 @@ jobs:
 
   check-version-sync:
     name: SKILL.md versions must match plugin.json
+    needs: check-plugin-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -129,3 +151,111 @@ jobs:
           fi
 
           echo "All versions are in sync."
+
+  discover-skills:
+    name: Discover skills
+    needs:
+      - check-version-check-sync
+      - check-template-version-stamps
+      - check-version-sync
+    runs-on: ubuntu-latest
+    outputs:
+      skills: ${{ steps.discover.outputs.skills }}
+      version: ${{ steps.discover.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Discover skill names and version
+        id: discover
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          skills=$(ls -d skills/*/ | xargs -n1 basename | python3 -c "import sys,json; print(json.dumps(sys.stdin.read().split()))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "skills=$skills" >> "$GITHUB_OUTPUT"
+          echo "Version: $version"
+          echo "Skills: $skills"
+
+  package-skill:
+    name: Package ${{ matrix.skill }}
+    needs: discover-skills
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        skill: ${{ fromJson(needs.discover-skills.outputs.skills) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload ${{ matrix.skill }} artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.skill }}
+          path: skills/${{ matrix.skill }}/
+
+  create-release:
+    name: Create release
+    needs: package-skill
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: version
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Version: $version"
+
+      - name: Check release does not already exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.version.outputs.version }}" > /dev/null 2>&1; then
+            echo "::error::Release v${{ steps.version.outputs.version }} already exists. Update the version in .claude-plugin/plugin.json before pushing."
+            exit 1
+          fi
+
+      - name: Download all skill artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Zip skill artifacts
+        run: |
+          mkdir -p release-assets
+          for dir in artifacts/*/; do
+            skill_name=$(basename "$dir")
+            echo "Zipping $skill_name"
+            (cd "$dir" && zip -r "../../release-assets/${skill_name}.zip" .)
+          done
+          echo "Release assets:"
+          ls -lh release-assets/
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$last_tag" ]; then
+            log=$(git log "${last_tag}..HEAD" --oneline)
+          else
+            log=$(git log --oneline)
+          fi
+          {
+            echo "notes<<EOF"
+            echo "$log"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          gh release create "v${version}" \
+            --title "Release ${version}" \
+            --notes "${{ steps.notes.outputs.notes }}" \
+            release-assets/*.zip
