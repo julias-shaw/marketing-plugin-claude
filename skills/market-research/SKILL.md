@@ -1,5 +1,7 @@
 ---
 name: market-research
+version: 1.2.0
+repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Run a structured 5-step AI-powered market research workflow based on Eugene Schwartz's
   research methodology. Produces a comprehensive research dossier that maps customer language,
@@ -29,6 +31,11 @@ Two deliverables:
    filterable format. Columns: `Quote,Date,Type,URL,Source,Author,Category`.
 
 ## Workflow
+
+### Version Check
+
+Before starting, read `references/version-check.md` and follow the version check
+procedure. Do not skip this step — but if the check fails, warn the user and continue.
 
 ### Phase 0: Gather Inputs
 

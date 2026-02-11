@@ -1,5 +1,7 @@
 ---
 name: prospect-psychology-audit
+version: 1.2.0
+repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Assess marketing content or customer profiles against three buyer psychology frameworks:
   Eisenberg's Four Buying Temperaments, Hughes' 6MX Decision Pillars, and Schwartz's
@@ -27,7 +29,11 @@ This skill uses three complementary models, each viewing buyer behavior from a d
 | **Hughes Decision Pillars** | The dominant psychological lens through which buyers filter choices | Chase Hughes — Six-Minute X-Ray (6MX) |
 | **Schwartz Awareness Levels** | Where the prospect sits on their journey from ignorance to purchase-readiness | Eugene Schwartz — Breakthrough Advertising |
 
-Before conducting any assessment, read the reference files for all three frameworks:
+Before conducting any assessment, read `references/version-check.md` and follow the
+version check procedure. Do not skip this step — but if the check fails, warn the user and
+continue.
+
+Then read the reference files for all three frameworks:
 - `references/eisenberg-temperaments.md`
 - `references/hughes-decision-pillars.md`
 - `references/schwartz-awareness-levels.md`

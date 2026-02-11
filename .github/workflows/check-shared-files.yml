@@ -1,0 +1,85 @@
+name: Check shared files and version sync
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**/references/version-check.md'
+      - 'skills/**/SKILL.md'
+      - '.claude-plugin/plugin.json'
+
+jobs:
+  check-version-check-sync:
+    name: version-check.md files must be identical
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version-check.md files are identical
+        run: |
+          files=$(find skills -name "version-check.md" -path "*/references/*" | sort)
+          count=$(echo "$files" | wc -l)
+
+          if [ "$count" -lt 2 ]; then
+            echo "Only $count version-check.md file found — nothing to compare."
+            exit 0
+          fi
+
+          first=$(echo "$files" | head -1)
+          all_match=true
+
+          while IFS= read -r file; do
+            if [ "$file" = "$first" ]; then
+              continue
+            fi
+            if ! diff -q "$first" "$file" > /dev/null 2>&1; then
+              echo "::error::Files differ: $first vs $file"
+              diff --unified "$first" "$file" || true
+              all_match=false
+            fi
+          done <<< "$files"
+
+          if [ "$all_match" = false ]; then
+            echo ""
+            echo "All version-check.md files across skills must be identical."
+            echo "Update all copies to match, then push again."
+            exit 1
+          fi
+
+          echo "All version-check.md files are identical."
+
+  check-version-sync:
+    name: SKILL.md versions must match plugin.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version fields are in sync
+        run: |
+          plugin_version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "plugin.json version: $plugin_version"
+
+          all_match=true
+
+          for skill_file in skills/*/SKILL.md; do
+            skill_version=$(sed -n '/^---$/,/^---$/p' "$skill_file" | grep '^version:' | awk '{print $2}')
+            skill_name=$(basename "$(dirname "$skill_file")")
+
+            if [ -z "$skill_version" ]; then
+              echo "::error::$skill_file is missing a version field in its frontmatter"
+              all_match=false
+            elif [ "$skill_version" != "$plugin_version" ]; then
+              echo "::error::Version mismatch: $skill_file has $skill_version but plugin.json has $plugin_version"
+              all_match=false
+            else
+              echo "$skill_name: $skill_version (matches)"
+            fi
+          done
+
+          if [ "$all_match" = false ]; then
+            echo ""
+            echo "Every SKILL.md version must match the version in .claude-plugin/plugin.json."
+            echo "Update all version fields to match, then push again."
+            exit 1
+          fi
+
+          echo "All versions are in sync."
