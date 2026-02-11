@@ -12,6 +12,7 @@ on:
       - 'skills/**/migrations/**'
       - 'skills/**/SKILL.md'
       - '.claude-plugin/plugin.json'
+      - '.github/**'
 
 jobs:
   check-version-check-sync:
