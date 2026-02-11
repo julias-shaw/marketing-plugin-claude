@@ -105,23 +105,7 @@ jobs:
           all_match=true
 
           for skill_file in skills/*/SKILL.md; do
-            skill_version=$(python3 -c "
-import re
-text = open('$skill_file').read()
-fm = text.split('---')[1]
-in_metadata = False
-for line in fm.splitlines():
-    if re.match(r'^metadata:\s*$', line):
-        in_metadata = True
-        continue
-    if in_metadata:
-        if re.match(r'^\S', line):
-            break
-        m = re.match(r'^\s+version:\s*(.+)', line)
-        if m:
-            print(m.group(1).strip())
-            break
-")
+            skill_version=$(sed -n '/^---$/,/^---$/p' "$skill_file" | grep -A1 '^metadata:' | grep 'version:' | head -1 | sed 's/.*version:[[:space:]]*//')
             skill_name=$(basename "$(dirname "$skill_file")")
 
             if [ -z "$skill_version" ]; then
