@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A marketing skill plugin for Claude bundling two skills:
 
-- **market-research** — 5-phase Schwartz research workflow producing a customer intelligence dossier + CSV
+- **market-research** — 5-phase Schwartz research workflow using subagent architecture to produce a multi-file customer intelligence package + CSV
 - **prospect-psychology-audit** — Eisenberg/Hughes/Schwartz framework assessment of marketing content or buyer profiles
 
 All files are Markdown instructions that Claude reads at runtime. There is no compiled code.
@@ -45,6 +45,8 @@ CI enforces the sync between plugin.json and SKILL.md files on every PR.
 
 `migration-check.md` is **intentionally different** per skill — each has its own migration history and artifact types.
 
+`prompt-site-agent.md` is shared across Phase 2 and Phase 3 within the market-research skill. It provides consistent instructions for per-site quote collection subagents.
+
 ## Skill Structure
 
 ```
@@ -59,11 +61,25 @@ skills/{skill-name}/
     └── {from}-to-{to}.md # e.g., 1.1.0-to-1.2.0.md
 ```
 
+## Market Research Subagent Architecture
+
+The market-research skill uses a subagent architecture where SKILL.md acts as a thin
+orchestrator dispatching each phase to dedicated subagents via the Task tool:
+
+- **Phase 0** runs in the main context (input collection only)
+- **Phases 1, 4, 5** each dispatch a single subagent
+- **Phases 2, 3** dispatch a coordinator subagent that spawns per-site subagents in parallel
+- **Summary** dispatches a single subagent to produce `research-summary.md`
+
+The orchestrator never reads prompt reference files directly — only subagents do. This keeps
+the main context window small. The `dossier-template.md` file now contains the lightweight
+summary template (not the old monolithic dossier template).
+
 ## Artifact Versioning
 
 Every artifact a skill produces gets stamped with the skill version so old artifacts can be detected and migrated later without regenerating from scratch.
 
-**Markdown artifacts** (dossiers, audits) use YAML frontmatter at the top of the file:
+**Markdown artifacts** (dossiers, audits, phase files) use YAML frontmatter at the top of the file:
 ```yaml
 ---
 skill_version: 1.2.0

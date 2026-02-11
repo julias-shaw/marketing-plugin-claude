@@ -1,114 +1,183 @@
-# Prompt 2: Voice of Customer
+# Phase 2 Coordinator: Voice of Customer
 
-**Purpose:** Collect ~160 authentic verbatim quotes from real online conversations, organized
-by eight categories. These quotes become the raw material for writing copy that
-sounds like it came from inside the customer's head.
+**Purpose:** Coordinate the collection of ~160 authentic verbatim quotes from real online
+conversations, organized by eight emotional categories. This coordinator identifies relevant
+sites, dispatches per-site subagents in parallel, and consolidates their results.
 
-**When running this prompt:** Use web search extensively. Search Reddit, forums, review sites,
-Quora, and social media for real conversations. Always cite the actual source. If you cannot
-verify a quote, flag it clearly — the user needs to know what's real vs. what might be
-AI-generated.
+**You are a coordinator subagent.** You will spawn per-site subagents via the Task tool to
+do the actual web searching. This keeps each agent's context focused on a single site.
 
-## Template
+## Inputs
 
-GOAL: Gather ~160 verbatim, word-for-word quotes from real online sources that target
-customers use when discussing their fears, frustrations, wants, beliefs, joys, objections,
-buying triggers, and competitor comparisons. Allow the user to override how many quotes to
-gather. Also produce a detailed persona sketch informed by these authentic voices. Finally,
-export all quotes to a structured CSV file.
+Before starting, read:
+- The research inputs from `00-inputs.md` in the output directory (passed in your Task prompt)
+- The per-site agent instructions at the path provided in your Task prompt
 
-CONTEXT:
-- Ideal customer persona: {PERSONA}
-- Product being sold: {PRODUCT}
-- Problems the product solves: {PROBLEMS}
+Extract from the inputs:
+- **Persona** — who the ideal customer is
+- **Product** — what's being sold
+- **Problems** — what problems the product solves
+- **URLs** — brand website, competitor sites, existing research
 
-TASK:
-1. Identify relevant online communities (subreddits, forums, review sites, social platforms)
-   where this persona discusses their problems and desires.
+## Step 1: Survey Search
 
-2. Search for real threads and comments from the past 6 months. Ensure insights reflect
-   current language and sentiment.
+Do 3-5 web searches to identify online communities where this persona discusses their
+problems and desires. Look for:
 
-3. Extract raw, word-for-word quotes. For each category below, collect authentic quotes
-   (default: ~ 20 per category for a total of ~160 but allow the user to override how
-   many to gather), preserving all slang, typos, and emotion:
-   - FEARS: What my prospect is afraid of...
-   - FRUSTRATIONS: What my prospect feels frustrated by...
-   - WANTS: What my prospect desires...
-   - BELIEFS: What my prospect believes to be true...
-   - JOYS: What my prospect enjoys or celebrates...
-   - OBJECTIONS: Reasons they give for not buying or not acting ("I would, but...")
-   - TRIGGERS: Events or moments that pushed them to start looking for a solution ("I finally snapped when...")
-   - COMPARISONS: How they talk about alternatives or competitors ("I tried X but...")
+- **Reddit** — Specific subreddits (not just r/all). Search for the persona's problems and
+  the product category. Aim for 3-5 distinct subreddits.
+- **Review sites** — Amazon reviews, G2, Capterra, TrustPilot, or niche review platforms
+  relevant to the product category.
+- **Forums** — Niche forums, Facebook groups, Discord servers (if publicly indexed), or
+  community sites.
+- **Q&A sites** — Quora topics, StackExchange sites relevant to the persona.
+- **YouTube** — Comment sections on relevant videos, channels.
+- **Social media** — Twitter/X threads, LinkedIn posts (if publicly indexed).
 
-4. Cite every quote with its source (subreddit, forum thread, review page, etc.) for
-   traceability. Be sure to include obsidian compatible markdown links to all sources.
+**Target: 8-15 distinct sites.** Be specific — not "Reddit" but "r/productivity" and
+"r/getdisciplined". Not "Amazon" but "Amazon reviews for [specific product category]".
 
-5. Capture the author. Record the username or handle of the person who posted each quote.
-   If the author is anonymous or not visible, write "Anonymous".
+Write your site list before proceeding to Step 2.
 
-6. Date every quote. After the source, include the date it was posted in parentheses,
-   formatted like (Jan 3, 2025). If the date is not visible on the page, check the Wayback
-   Machine (web.archive.org) to find when the content was first captured. If no date can be
-   determined, write (Date Unknown).
+## Step 2: Dispatch Per-Site Agents
 
-7. Verify every quote. Before saving a quote, re-visit the source URL and confirm the quote
-   actually appears on the page. If the quote cannot be found on the page, discard it and
-   find a real replacement. Do not guess or reconstruct quotes from memory — every quote in
-   the final output must exist verbatim at its cited source.
+For each site identified in Step 1, spawn a per-site subagent via the Task tool. **Launch
+all per-site agents in a single message** so they run in parallel.
 
-8. Synthesize a 5–6 sentence persona sketch that paints a vivid picture of the typical
-   customer — their emotional landscape, daily challenges, and driving motivations — based
-   entirely on the language and patterns uncovered in your research.
+Construct each Task prompt like this:
 
-OUTPUT FORMAT:
-Return results as a numbered list organized by category. Each quote in quotation marks with
-the source labeled and the date in parentheses after the source. Format dates as Mon D, YYYY
-(e.g. Jan 3, 2025). Write (Date Unknown) if the date cannot be determined.
+```
+Task tool call:
+  subagent_type: "general-purpose"
+  description: "VoC quotes from {site_name}"
+  prompt: |
+    You are collecting customer quotes from {site_name}.
 
-Example:
-1. "I've tried everything and nothing sticks." — u/habithacker, [r/productivity](https://reddit.com/...) (Mar 12, 2025)
-2. "The pricing feels predatory honestly." — Anonymous, [TrustPilot review](https://trustpilot.com/...) (Date Unknown)
+    Read your instructions from {path to prompt-site-agent.md}.
 
-End with the persona sketch in plain language.
+    Site to search: {site_name} ({site_url if applicable})
+    Search focus: Look for quotes revealing fears, frustrations, wants, beliefs, joys,
+    objections, buying triggers, and competitor comparisons related to:
+    Persona: {persona}
+    Product: {product}
+    Problems: {problems}
 
-CSV OUTPUT:
-After the dossier content, write all quotes to a file named `voice-of-customer.csv` with
-these columns:
-
-| Column   | Description                                                        |
-|----------|--------------------------------------------------------------------|
-| Quote    | The exact verbatim quote text (no surrounding quotation marks)     |
-| Date     | Post date as Mon D, YYYY (e.g. Jan 3, 2025) or "Date Unknown"     |
-| Type     | Source type: Reddit, Forum, Review, YouTube, Quora, Social, Other  |
-| URL      | Direct URL to the source page                                      |
-| Source   | Specific source name (e.g. r/productivity, Amazon, TrustPilot)    |
-| Author   | Username or handle of the poster, or "Anonymous" if not available  |
-| Category | One of: Fear, Frustration, Want, Belief, Joy, Objection, Trigger, Comparison |
-
-Rules for the CSV:
-- Use double quotes around every field value to handle commas and special characters in quotes
-- Escape any double quotes inside field values by doubling them ("" inside the field)
-- One row per quote, no blank rows
-- Include the header row
-
-META FILE:
-After creating `voice-of-customer.csv`, also create a companion file named
-`voice-of-customer.csv.meta` with the following YAML content:
-
-```yaml
-skill_name: market-research
-skill_version: {version from SKILL.md metadata.version}
-created_at: {today's date as YYYY-MM-DD}
-columns: Quote,Date,Type,URL,Source,Author,Category
+    Write quotes incrementally to {output_dir}/02-site-{sanitized_site_name}.md.
+    (Sanitize the site name: lowercase, replace spaces and special chars with hyphens.)
 ```
 
-This `.meta` file allows migration tooling to detect the skill version that produced the CSV,
-since CSV files cannot contain YAML frontmatter. Always read the version dynamically from
-`SKILL.md` `metadata.version` — do not hardcode it.
+**Important:** Dispatch ALL per-site agents in a single message with multiple Task calls
+so they run in parallel. Do not wait for one to finish before launching the next.
 
-CONFIDENCE NOTES:
-After the output, add a brief note indicating:
-- Which quotes were pulled from verified, linkable sources
-- Which quotes are paraphrased or synthesized from multiple sources
-- Any areas where source material was thin
+## Step 3: Consolidation
+
+After ALL per-site agents have completed:
+
+1. **Read all intermediate files** matching `02-site-*.md` in the output directory.
+
+2. **Categorize every quote** into one of eight categories:
+   - **Fears** — What the prospect is afraid of
+   - **Frustrations** — What the prospect feels frustrated by
+   - **Wants** — What the prospect desires
+   - **Beliefs** — What the prospect believes to be true
+   - **Joys** — What the prospect enjoys or celebrates
+   - **Objections** — Reasons they give for not buying or acting ("I would, but...")
+   - **Triggers** — Events or moments that pushed them to seek a solution ("I finally snapped when...")
+   - **Comparisons** — How they talk about alternatives or competitors ("I tried X but...")
+
+   Some quotes may fit multiple categories — assign the most dominant one.
+
+3. **Write `02-voice-of-customer.md`** with this structure:
+
+   ```
+   ---
+   skill_version: {version from 00-inputs.md frontmatter}
+   skill_name: market-research
+   phase: 2-voice-of-customer
+   ---
+
+   # Voice of Customer
+
+   ## Executive Summary
+   {2-3 sentences: total quote count, number of sources searched, key emotional themes found}
+
+   ## Persona Sketch
+   {5-6 sentence persona sketch based on the language patterns across all quotes — their
+   emotional landscape, daily challenges, and driving motivations}
+
+   ## Fears
+   {numbered quotes with attribution}
+
+   ## Frustrations
+   {numbered quotes with attribution}
+
+   ## Wants
+   {numbered quotes with attribution}
+
+   ## Beliefs
+   {numbered quotes with attribution}
+
+   ## Joys
+   {numbered quotes with attribution}
+
+   ## Objections
+   {numbered quotes with attribution}
+
+   ## Triggers
+   {numbered quotes with attribution}
+
+   ## Comparisons
+   {numbered quotes with attribution}
+
+   ## Confidence Notes
+   - Which categories had strong coverage vs. thin coverage
+   - Which sources were richest
+   - Any quotes that could not be verified
+   ```
+
+   Output the frontmatter as raw YAML (no code fences). Read the version from the inputs
+   file's frontmatter — do not hardcode it.
+
+   Each quote should be formatted as:
+   ```
+   1. "Exact verbatim quote." — {author}, [{source}]({url}) ({date})
+   ```
+
+4. **Write `voice-of-customer.csv`** containing every quote with these columns:
+
+   | Column   | Description |
+   |----------|-------------|
+   | Quote    | The exact verbatim quote text (no surrounding quotation marks) |
+   | Date     | Post date as Mon D, YYYY or "Date Unknown" |
+   | Type     | Source type: Reddit, Forum, Review, YouTube, Quora, Social, Other |
+   | URL      | Direct URL to the source page |
+   | Source   | Specific source name (e.g. r/productivity, Amazon, TrustPilot) |
+   | Author   | Username or handle, or "Anonymous" |
+   | Category | One of: Fear, Frustration, Want, Belief, Joy, Objection, Trigger, Comparison |
+
+   CSV rules:
+   - Use double quotes around every field value
+   - Escape any double quotes inside field values by doubling them
+   - One row per quote, no blank rows
+   - Include the header row
+
+5. **Write `voice-of-customer.csv.meta`** companion file:
+
+   ```yaml
+   skill_name: market-research
+   skill_version: {version from 00-inputs.md frontmatter}
+   created_at: {today's date as YYYY-MM-DD}
+   columns: Quote,Date,Type,URL,Source,Author,Category
+   ```
+
+6. **Delete all intermediate files** matching `02-site-*.md` in the output directory.
+
+## Quality Check
+
+**Target: ~160 quotes total (~20 per category).** After consolidation, check:
+
+- If any category has fewer than 10 quotes, note it prominently in the Confidence Notes.
+- If total quote count is below 100, note which sources were thin and what topics lacked
+  coverage.
+- The quote count is a default — if the orchestrator or user specified a different target,
+  use that instead.

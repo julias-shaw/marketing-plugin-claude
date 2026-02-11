@@ -1,104 +1,89 @@
-# Dossier Template
+# Summary Dossier Template
 
-Use this template to assemble the final research dossier after completing all five phases.
-Replace each section with the actual research output. Remove any instructional comments.
+Use this template to assemble the `research-summary.md` file after all five phases are
+complete. This summary provides an overview of each phase with key highlights — the full
+details live in the individual phase files.
 
-**Important:** Always read the current version from `SKILL.md` `metadata.version` and insert it
-into the `skill_version` field below. Do not hardcode the version number. Output the frontmatter
-below as raw YAML (the `---` delimiters only, no surrounding code fences).
+**Important:** Always read the current version from the `00-inputs.md` file's frontmatter
+`skill_version` field and insert it below. Do not hardcode the version number. Output the
+frontmatter below as raw YAML (the `---` delimiters only, no surrounding code fences).
 
 ---
 
 ```
 ---
-skill_version: {version from SKILL.md metadata.version}
+skill_version: {version from 00-inputs.md frontmatter}
 skill_name: market-research
 ---
 ```
 
-# Market Research Dossier: {PRODUCT_NAME}
+# Market Research Summary: {PRODUCT_NAME}
 
 **Prepared for:** {CLIENT_OR_BRAND}
 **Date:** {DATE}
 **Methodology:** Eugene Schwartz Research Framework, AI-assisted
+**Architecture:** Subagent-based multi-file research package
 
 ---
 
 ## 1. Market Snapshot
 
-{Phase 1 output}
+{Brief summary from 01-market-snapshot.md — the executive summary and key positioning points.
+Keep to 1-2 paragraphs. Full details in `01-market-snapshot.md`.}
 
 ---
 
-## 2. Voice of Customer
+## 2. Voice of Customer Overview
+
+**Total quotes:** {count from 02-voice-of-customer.md}
+**Sources searched:** {number of distinct sources}
+
+### Category Breakdown
+
+| Category | Count | Key Theme |
+|----------|-------|-----------|
+| Fears | {n} | {dominant theme} |
+| Frustrations | {n} | {dominant theme} |
+| Wants | {n} | {dominant theme} |
+| Beliefs | {n} | {dominant theme} |
+| Joys | {n} | {dominant theme} |
+| Objections | {n} | {dominant theme} |
+| Triggers | {n} | {dominant theme} |
+| Comparisons | {n} | {dominant theme} |
 
 ### Persona Sketch
 
-{Phase 2 persona sketch}
+{Copy the persona sketch from 02-voice-of-customer.md}
 
-### Fears
+### Top Quotes
 
-{Phase 2 quotes}
+{Pick the 5-8 most powerful quotes across all categories — the ones that best capture the
+customer's voice. Include full attribution.}
 
-### Frustrations
-
-{Phase 2 quotes}
-
-### Wants
-
-{Phase 2 quotes}
-
-### Beliefs
-
-{Phase 2 quotes}
-
-### Joys
-
-{Phase 2 quotes}
-
-### Objections
-
-{Phase 2 quotes}
-
-### Triggers
-
-{Phase 2 quotes}
-
-### Comparisons
-
-{Phase 2 quotes}
-
-### Confidence Notes
-
-{Phase 2 confidence notes}
+*Full quote bank with all {count} quotes: see `02-voice-of-customer.md`*
+*Filterable CSV: see `voice-of-customer.csv`*
 
 ---
 
-## 3. Psychographic Profile
+## 3. Psychographic Profile Overview
 
-### Updated Persona Sketch
+### Key Patterns
 
-{Phase 3 persona sketch}
+{Summarize the top 3-5 psychographic patterns from 03-psychographic-profile.md. For each,
+include the theme name and the Pattern insight — but not all the individual quotes.}
 
-### Identity Themes
+### Persona Sketch
 
-{Phase 3 themed clusters with pattern notes}
+{Copy the persona sketch from 03-psychographic-profile.md}
 
-### Problem Themes
-
-{Phase 3 themed clusters with pattern notes}
-
-### Dreams & Desires Themes
-
-{Phase 3 themed clusters with pattern notes}
-
-### Obstacle Themes
-
-{Phase 3 themed clusters with pattern notes}
+*Full themed clusters with all quotes: see `03-psychographic-profile.md`*
 
 ---
 
 ## 4. Awareness & Motivation Map
+
+{Copy the three tables in full from 04-awareness-motivation-map.md — these are compact and
+are the core strategic output of this phase.}
 
 ### Market Awareness Levels
 
@@ -126,31 +111,44 @@ skill_name: market-research
 
 ## 5. Feature-to-Desire Bridge
 
+{Copy the table in full from 05-feature-desire-bridge.md — this is compact and is the core
+output of this phase.}
+
 | Product | Feature | Why Included | Performance Benefit | Deeper Benefit | Dominant Emotion | Matching Desire |
 |---------|---------|-------------|--------------------|--------------------|------------------|-----------------|
 | {name} | {feature} | {why} | {benefit 1} | {benefit 2} | {emotion} | {desire} |
 
 ---
 
-## How to Use This Dossier
+## How to Use These Files
 
-- **For headlines & hooks:** Pull from the strongest quotes in Section 2 (Voice of Customer)
-- **For email sequences:** Use the Awareness Levels table (Section 4) to match messaging to buyer stage
+- **For headlines & hooks:** Pull from the strongest quotes in `02-voice-of-customer.md`
+- **For email sequences:** Use the Awareness Levels table (Section 4 above) to match messaging to buyer stage
 - **For landing pages:** Lead with Desires and Emotions from Section 5, backed by Features
-- **For objection handling:** Use Objections quotes (Section 2) + Won't Tell and Can't Tell columns (Section 4)
-- **For retargeting & win-back:** Use Triggers (Section 2) to time messages around catalytic moments
-- **For competitive positioning:** Use Comparisons (Section 2) to address how prospects evaluate alternatives
-- **For brand voice:** Use the Identity themes in Section 3 to mirror how customers see themselves
-- **For ad copy:** Combine Fears/Frustrations (Section 2) with Dreams/Desires (Section 3)
+- **For objection handling:** Use Objections quotes in `02-voice-of-customer.md` + Won't Tell and Can't Tell columns above
+- **For retargeting & win-back:** Use Triggers in `02-voice-of-customer.md` to time messages around catalytic moments
+- **For competitive positioning:** Use Comparisons in `02-voice-of-customer.md` to address how prospects evaluate alternatives
+- **For brand voice:** Use the Identity themes in `03-psychographic-profile.md` to mirror how customers see themselves
+- **For ad copy:** Combine Fears/Frustrations from `02-voice-of-customer.md` with Dreams/Desires from `03-psychographic-profile.md`
 - **For spreadsheet analysis:** Import `voice-of-customer.csv` to filter, sort, and pivot quotes by category, source, or date
+
+---
+
+## File Manifest
+
+| File | What It Contains |
+|------|-----------------|
+| `00-inputs.md` | Research inputs: persona, product, problems, URLs |
+| `01-market-snapshot.md` | Strategic foundation: who we're targeting, what we're selling, why |
+| `02-voice-of-customer.md` | ~160 categorized customer quotes with full attribution |
+| `03-psychographic-profile.md` | Themed psychographic clusters across Identity, Problems, Dreams, Obstacles |
+| `04-awareness-motivation-map.md` | Awareness levels, desire ladders, hidden motivations tables |
+| `05-feature-desire-bridge.md` | Feature → benefit → emotion → desire mapping table |
+| `voice-of-customer.csv` | All VoC quotes in structured CSV for filtering and analysis |
+| `voice-of-customer.csv.meta` | CSV metadata (version, columns) for migration tooling |
+| `research-summary.md` | This file — overview and navigation guide |
 
 ---
 
 *Research methodology based on Eugene Schwartz's Breakthrough Advertising framework.*
 *AI-assisted research — all quotes should be verified before use in final copy.*
-
-## Companion file: voice-of-customer.csv
-
-All Voice of Customer quotes (Section 2) are also exported to `voice-of-customer.csv` for
-filtering, sorting, and importing into other tools. Columns:
-`Quote,Date,Type,URL,Source,Author,Category`

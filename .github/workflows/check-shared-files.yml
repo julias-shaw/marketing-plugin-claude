@@ -12,6 +12,7 @@ on:
       - 'skills/**/migrations/**'
       - 'skills/**/SKILL.md'
       - '.claude-plugin/plugin.json'
+      - 'skills/**/references/prompt-site-agent.md'
       - '.github/**'
 
 jobs:
