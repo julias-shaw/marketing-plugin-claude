@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nEnhance market research skill with quote dating, CSV export, verification, and new categories\n\nAdd date attribution \\(Mon D, YYYY\\) to all quotes with Wayback Machine fallback, export\nvoice-of-customer data to a structured CSV \\(Quote,Date,Type,URL,Source,Author,Category\\),\nadd three new quote categories \\(Objections, Triggers, Comparisons\\), capture author/username\nfor each quote, and require source verification before saving any quote.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "WebSearch",
+      "Bash(git -C /Users/julias/projects/julias-shaw-github/marketing-plugin-claude:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd version check system with self-contained skills and CI enforcement\n\nEach skill now carries version and repository fields in its SKILL.md frontmatter\nso it can check for updates even when distributed as a standalone zip. Version\ncheck fetches from raw GitHub URLs \\(no gh CLI dependency\\), caches results for\n24 hours, and lets users skip if outdated.\n\nAdded GitHub Actions workflow with two jobs: one ensures all version-check.md\ncopies stay identical across skills, the other ensures SKILL.md versions match\nplugin.json. Added CHANGELOG.md for surfacing what''s new to outdated users.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(gh pr edit:*)",
+      "Bash(git commit:*)",
+      "Bash(gh pr view:*)",
+      "Bash(test:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(git checkout:*)",
+      "Bash(ls:*)",
+      "Bash(git pull:*)"
+    ]
+  }
+}

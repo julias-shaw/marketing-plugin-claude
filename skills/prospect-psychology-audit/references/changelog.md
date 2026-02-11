@@ -1,9 +1,5 @@
 # Changelog
 
-## 1.3.0
-
-- VOC visualization
-
 ## 1.2.0
 
 - Initial release — assess marketing content or customer profiles against Eisenberg
