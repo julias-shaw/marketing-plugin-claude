@@ -54,6 +54,7 @@ Task tool call:
     You are collecting customer quotes from {site_name}.
 
     Read your instructions from {path to prompt-site-agent.md}.
+    Read the text fragment URL reference from {path to text-fragments.md}.
 
     Site to search: {site_name} ({site_url if applicable})
     Search focus: Look for quotes revealing fears, frustrations, wants, beliefs, joys,
@@ -140,8 +141,12 @@ After ALL per-site agents have completed:
 
    Each quote should be formatted as:
    ```
-   1. "Exact verbatim quote." — {author}, [{source}]({url}) ({date})
+   1. "Exact verbatim quote." — {author}, [{source}]({url with text fragment}) ({date})
    ```
+
+   **Preserve text fragment URLs.** Per-site agents append `#:~:text=...` text fragments to
+   source URLs so links scroll to the quoted passage. When consolidating quotes from
+   intermediate files, keep these text fragment URLs intact — do not strip them.
 
 4. **Write `voice-of-customer.csv`** containing every quote with these columns:
 
@@ -150,7 +155,7 @@ After ALL per-site agents have completed:
    | Quote    | The exact verbatim quote text (no surrounding quotation marks) |
    | Date     | Post date as Mon D, YYYY or "Date Unknown" |
    | Type     | Source type: Reddit, Forum, Review, YouTube, Quora, Social, Other |
-   | URL      | Direct URL to the source page |
+   | URL      | Direct URL to the source page, including `#:~:text=` text fragment when available |
    | Source   | Specific source name (e.g. r/productivity, Amazon, TrustPilot) |
    | Author   | Username or handle, or "Anonymous" |
    | Category | One of: Fear, Frustration, Want, Belief, Joy, Objection, Trigger, Comparison |

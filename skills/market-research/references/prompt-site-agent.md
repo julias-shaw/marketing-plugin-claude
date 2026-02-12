@@ -14,6 +14,7 @@ These are passed in the Task prompt that spawns this agent:
 - **Problems** — What problems the product solves
 - **Search focus** — What to look for (e.g. "fears and frustrations about productivity tools" or "identity and self-perception quotes")
 - **Output file path** — Where to write results (e.g. `{output_dir}/02-site-reddit-productivity.md`)
+- **Text fragment reference** — Path to `text-fragments.md` for URL formatting rules
 
 ## Search Procedure
 
@@ -40,13 +41,18 @@ These are passed in the Task prompt that spawns this agent:
 Record each quote with all of the following fields:
 
 ```
-1. "Exact verbatim quote text here." — {author}, [{source name}]({source URL}) ({Mon D, YYYY})
+1. "Exact verbatim quote text here." — {author}, [{source name}]({source URL with text fragment}) ({Mon D, YYYY})
    Context: {brief tag — what the quote is about}
 ```
 
 - **Verbatim text** — Word-for-word as posted. Preserve slang, typos, emotion, emphasis.
 - **Author** — Username or handle (e.g. `u/habithacker`). Write "Anonymous" if not visible.
-- **Source** — Obsidian-compatible markdown link: `[display name](URL)`.
+- **Source** — Markdown link with a **text fragment URL**: `[display name](URL#:~:text=quoted%20text)`.
+  Read the text fragment reference file (path provided in your Task prompt) for the full syntax
+  and URL-encoding rules. The text fragment should use the quote text (or a distinctive portion
+  of it) so the browser scrolls to and highlights the quoted passage when clicked. For quotes
+  under ~100 characters, use the full quote text. For longer quotes, use the range syntax
+  (`text=first%20few%20words,last%20few%20words`).
 - **Date** — Formatted as `Mon D, YYYY` (e.g. `Jan 3, 2025`). If the date is not visible on
   the page, check the Wayback Machine (web.archive.org) to find when the content was first
   captured. Write `Date Unknown` if no date can be determined.
@@ -84,10 +90,10 @@ Write the output file with this structure:
 
 ---
 
-1. "Quote text here." — u/username, [r/subreddit](https://reddit.com/...) (Mar 12, 2025)
+1. "I've tried every app and nothing sticks." — u/username, [r/subreddit](https://reddit.com/r/productivity/abc123#:~:text=I've%20tried%20every%20app%20and%20nothing%20sticks) (Mar 12, 2025)
    Context: frustration with onboarding complexity
 
-2. "Another quote here." — Anonymous, [TrustPilot review](https://trustpilot.com/...) (Date Unknown)
+2. "Another quote here." — Anonymous, [TrustPilot review](https://trustpilot.com/review/example#:~:text=Another%20quote%20here) (Date Unknown)
    Context: comparing alternatives
 
 ...
