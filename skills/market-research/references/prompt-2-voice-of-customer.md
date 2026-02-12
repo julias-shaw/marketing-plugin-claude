@@ -153,7 +153,7 @@ After ALL per-site agents have completed:
    | Column   | Description |
    |----------|-------------|
    | Quote    | The exact verbatim quote text (no surrounding quotation marks) |
-   | Date     | Post date as Mon D, YYYY or "Date Unknown" |
+   | Date     | Post date as Mon D, YYYY (convert relative dates; "Date Unknown" only as last resort) |
    | Type     | Source type: Reddit, Forum, Review, YouTube, Quora, Social, Other |
    | URL      | Direct URL to the source page, including `#:~:text=` text fragment when available |
    | Source   | Specific source name (e.g. r/productivity, Amazon, TrustPilot) |
