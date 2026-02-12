@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.0
+
+- All source URLs now include Text Fragment directives (`#:~:text=...`) that scroll to and
+  highlight the quoted passage when clicked in a browser
+- New `text-fragments.md` reference doc provides URL construction rules for per-site subagents
+- Per-site agents (`prompt-site-agent.md`) generate text fragment URLs during quote collection
+- Phase 2 and 3 coordinators preserve text fragment URLs through consolidation
+- CSV `URL` column includes text fragment URLs when available
+- Summary dossier Top Quotes section preserves text fragment URLs
+
+## 1.5.0
+
+- Version bump (no structural changes to artifacts)
+
 ## 1.4.0
 
 - Restructured skill to use subagent architecture for context efficiency

@@ -1,7 +1,7 @@
 ---
 name: market-research
 metadata:
-  version: 1.4.0
+  version: 1.6.0
   repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Run a structured 5-step AI-powered market research workflow based on Eugene Schwartz's
@@ -171,6 +171,7 @@ Task tool call:
     Read the research inputs from {output_dir}/00-inputs.md.
     Read your coordinator instructions from {skill_dir}/references/prompt-2-voice-of-customer.md.
     The per-site agent instructions are at {skill_dir}/references/prompt-site-agent.md.
+    The text fragment URL reference is at {skill_dir}/references/text-fragments.md.
     The output directory is {output_dir}/.
 
     Follow the coordinator instructions. They will tell you to:
@@ -204,6 +205,7 @@ Task tool call:
     Read the Phase 2 output from {output_dir}/02-voice-of-customer.md.
     Read your coordinator instructions from {skill_dir}/references/prompt-3-psychographic-profile.md.
     The per-site agent instructions are at {skill_dir}/references/prompt-site-agent.md.
+    The text fragment URL reference is at {skill_dir}/references/text-fragments.md.
     The output directory is {output_dir}/.
 
     Follow the coordinator instructions. They will tell you to:

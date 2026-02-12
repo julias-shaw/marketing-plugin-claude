@@ -58,7 +58,8 @@ Keep to 1-2 paragraphs. Full details in `01-market-snapshot.md`.}
 ### Top Quotes
 
 {Pick the 5-8 most powerful quotes across all categories — the ones that best capture the
-customer's voice. Include full attribution.}
+customer's voice. Include full attribution with text fragment URLs intact — these URLs
+link directly to the quoted passage on the source page.}
 
 *Full quote bank with all {count} quotes: see `02-voice-of-customer.md`*
 *Filterable CSV: see `voice-of-customer.csv`*

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+
+- Version bump for plugin sync (no changes to audit skill artifacts)
+
 ## 1.2.0
 
 - Initial release — assess marketing content or customer profiles against Eisenberg

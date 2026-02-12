@@ -14,6 +14,7 @@ These are passed in the Task prompt that spawns this agent:
 - **Problems** — What problems the product solves
 - **Search focus** — What to look for (e.g. "fears and frustrations about productivity tools" or "identity and self-perception quotes")
 - **Output file path** — Where to write results (e.g. `{output_dir}/02-site-reddit-productivity.md`)
+- **Text fragment reference** — Path to `text-fragments.md` for URL formatting rules
 
 ## Search Procedure
 
@@ -40,16 +41,43 @@ These are passed in the Task prompt that spawns this agent:
 Record each quote with all of the following fields:
 
 ```
-1. "Exact verbatim quote text here." — {author}, [{source name}]({source URL}) ({Mon D, YYYY})
+1. "Exact verbatim quote text here." — {author}, [{source name}]({source URL with text fragment}) ({Mon D, YYYY})
    Context: {brief tag — what the quote is about}
 ```
 
 - **Verbatim text** — Word-for-word as posted. Preserve slang, typos, emotion, emphasis.
 - **Author** — Username or handle (e.g. `u/habithacker`). Write "Anonymous" if not visible.
-- **Source** — Obsidian-compatible markdown link: `[display name](URL)`.
-- **Date** — Formatted as `Mon D, YYYY` (e.g. `Jan 3, 2025`). If the date is not visible on
-  the page, check the Wayback Machine (web.archive.org) to find when the content was first
-  captured. Write `Date Unknown` if no date can be determined.
+- **Source** — Markdown link with a **text fragment URL**: `[display name](URL#:~:text=quoted%20text)`.
+  Read the text fragment reference file (path provided in your Task prompt) for the full syntax
+  and URL-encoding rules. The text fragment should use the quote text (or a distinctive portion
+  of it) so the browser scrolls to and highlights the quoted passage when clicked. For quotes
+  under ~100 characters, use the full quote text. For longer quotes, use the range syntax
+  (`text=first%20few%20words,last%20few%20words`).
+- **Date** — Formatted as `Mon D, YYYY` (e.g. `Jan 3, 2025`). Extracting a date is required
+  for every quote — `Date Unknown` is a last resort only after all options below are exhausted.
+
+  **How to find the date:**
+  1. Check during verification (Step 1 below) — when you re-visit the source URL, look for
+     the post/comment timestamp on the page.
+  2. **Convert relative dates to exact dates.** Many sites show relative timestamps like
+     "3 months ago", "2 days ago", "1 year ago", "2h", "5mo". Calculate the best-guess exact
+     date by subtracting from today's date. For example, if today is Feb 11, 2026 and the post
+     says "3 months ago", record `Nov 11, 2025`. For vague relative dates like "1 year ago",
+     estimate to the nearest day (e.g. `Feb 11, 2025`).
+  3. **Common date locations by site type:**
+     - **Reddit** — Timestamp on the post or comment (often relative like "3 days ago"; hover
+       or inspect for the full date if available via web search results)
+     - **Amazon/review sites** — "Reviewed in {Month Year}" or "Reviewed on {Date}" near the
+       review heading
+     - **YouTube** — Comment timestamp below the username (often relative)
+     - **Quora** — Answer date below the author name
+     - **Forums** — Post timestamp in the post header, often as a full date
+     - **Twitter/X** — Full timestamp on the tweet
+  4. If no date is visible on the page, check the Wayback Machine (web.archive.org) to find
+     when the content was first captured.
+  5. If the page only shows a month and year (e.g. "January 2025"), use the 15th as the day:
+     `Jan 15, 2025`.
+  6. Only write `Date Unknown` if all of the above fail.
 - **Context tag** — A brief phrase describing what the quote is about (e.g. "frustration with
   onboarding complexity", "comparing alternatives to Notion").
 
@@ -66,10 +94,15 @@ productive search.
 
 Before finalizing a quote:
 
-1. Re-visit the source URL and confirm the quote actually appears on the page.
+1. **Re-visit the source URL** and confirm the quote actually appears on the page. While on
+   the page, **extract the post date** — look for timestamps near the quote (post header,
+   comment metadata, review date). Convert relative dates (e.g. "3 months ago") to an exact
+   `Mon D, YYYY` date by subtracting from today's date.
 2. If the quote cannot be found at the cited URL, discard it and find a real replacement.
 3. Do not guess or reconstruct quotes from memory — every quote in the output must exist
    verbatim at its cited source.
+4. If a quote still has `Date Unknown` after the verification visit, flag it in the output
+   notes at the end of the file.
 
 ## Output File Format
 
@@ -84,10 +117,10 @@ Write the output file with this structure:
 
 ---
 
-1. "Quote text here." — u/username, [r/subreddit](https://reddit.com/...) (Mar 12, 2025)
+1. "I've tried every app and nothing sticks." — u/username, [r/subreddit](https://reddit.com/r/productivity/abc123#:~:text=I've%20tried%20every%20app%20and%20nothing%20sticks) (Mar 12, 2025)
    Context: frustration with onboarding complexity
 
-2. "Another quote here." — Anonymous, [TrustPilot review](https://trustpilot.com/...) (Date Unknown)
+2. "Another quote here." — Anonymous, [TrustPilot review](https://trustpilot.com/review/example#:~:text=Another%20quote%20here) (Oct 15, 2025)
    Context: comparing alternatives
 
 ...

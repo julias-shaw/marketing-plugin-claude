@@ -70,6 +70,7 @@ If gaps exist:
        You are collecting customer quotes from {site_name} to fill gaps in a psychographic profile.
 
        Read your instructions from {path to prompt-site-agent.md}.
+       Read the text fragment URL reference from {path to text-fragments.md}.
 
        Site to search: {site_name}
        Search focus: Looking specifically for quotes about {gap description — e.g. "how customers
@@ -108,8 +109,8 @@ motivations — based on the psychographic patterns uncovered, not just demograp
 ## Identity
 
 ### Theme 1: {theme name}
-1. "Quote one." — {author}, [{source}]({url}) ({date})
-2. "Quote two." — {author}, [{source}]({url}) ({date})
+1. "Quote one." — {author}, [{source}]({url with text fragment}) ({date})
+2. "Quote two." — {author}, [{source}]({url with text fragment}) ({date})
 
 **Pattern:** {insight about what this cluster reveals about how they think}
 
@@ -134,6 +135,10 @@ motivations — based on the psychographic patterns uncovered, not just demograp
 
 Output the frontmatter as raw YAML (no code fences). Read the version from the inputs
 file's frontmatter — do not hardcode it.
+
+**Preserve text fragment URLs.** Phase 2 quotes include `#:~:text=...` text fragments in
+their source URLs. When reusing quotes from Phase 2 or merging gap-fill quotes, keep these
+text fragment URLs intact — do not strip them.
 
 ## Step 5: Clean Up
 

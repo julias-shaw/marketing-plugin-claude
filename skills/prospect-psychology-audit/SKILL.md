@@ -1,7 +1,7 @@
 ---
 name: prospect-psychology-audit
 metadata:
-  version: 1.4.0
+  version: 1.6.0
   repository: https://github.com/julias-shaw/marketing-plugin-claude
 description: >
   Assess marketing content or customer profiles against three buyer psychology frameworks:
